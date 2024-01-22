@@ -87,7 +87,7 @@ function CityItem({ city }) {
         }`}
         onClick={handleToggleExpand}
       >
-        <h3 className={styles.name}>{name}</h3>
+        {!isExpanded && <h3 className={styles.name}>{name}</h3>}
 
         {!isExpanded && <p className={styles.oneliner}>{oneliner}</p>}
 
