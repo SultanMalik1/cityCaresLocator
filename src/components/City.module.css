@@ -1,0 +1,51 @@
+.profileContainer {
+  padding: 2rem 3rem;
+  max-height: 70%;
+  background-color: var(--color-dark--2);
+  border-radius: 7px;
+  overflow-y: scroll; /* Use overflow-y instead of overflow to only hide the vertical scrollbar */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Hide the scrollbar */
+.profileContainer::-webkit-scrollbar {
+  width: 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profileContainer h6 {
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--color-light--1);
+}
+
+.profileContainer h3 {
+  font-size: 1.9rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profileContainer h3 span {
+  font-size: 3.2rem;
+  line-height: 1;
+}
+
+.profileContainer p {
+  font-size: 1.6rem;
+}
+
+.profileContainer a:link,
+.profileContainer a:visited {
+  font-size: 1.6rem;
+  color: var(--color-brand--1);
+}
