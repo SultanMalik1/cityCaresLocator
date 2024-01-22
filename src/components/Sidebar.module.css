@@ -11,9 +11,9 @@
 }
 
 /* Hide scrollbar for Chrome, Safari, and Opera */
-.sidebar::-webkit-scrollbar {
+/* .sidebar::-webkit-scrollbar {
   width: 0.5em;
-}
+} */
 
 .sidebar::-webkit-scrollbar-thumb {
   background-color: var(--color-dark--2);
