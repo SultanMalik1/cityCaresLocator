@@ -1,6 +1,6 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Map.module.css";
-import { useCities } from "../contexts/CitiesContext";
+import { useEnterprises } from "../contexts/EnterprisesContext";
 import Button from "./Button";
 
 import {
@@ -14,8 +14,9 @@ import { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useUrlPosition } from "../hooks/useUrlPosition";
+
 function Map() {
-  const { cities } = useCities();
+  const { enterprises } = useEnterprises();
   const [mapPosition, setMapPosition] = useState([
     40.77206305312022, -73.9627399862185,
   ]);
@@ -59,13 +60,13 @@ function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
         />
-        {cities.map((city) => (
+        {enterprises.map((enterprise) => (
           <Marker
-            position={[city.position.lat, city.position.lng]}
-            key={city.id}
+            position={[enterprise.position.lat, enterprise.position.lng]}
+            key={enterprise.id}
           >
             <Popup>
-              <span>{city.name}</span>
+              <span>{enterprise.name}</span>
             </Popup>
           </Marker>
         ))}

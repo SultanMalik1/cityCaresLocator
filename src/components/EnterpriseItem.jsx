@@ -1,49 +1,6 @@
-// import { useCities } from "../contexts/CitiesContext";
-// import styles from "./CityItem.module.css";
-// import { Link } from "react-router-dom";
-
-// const formatDate = (date) =>
-//   new Intl.DateTimeFormat("en", {
-//     day: "numeric",
-//     month: "long",
-//     year: "numeric",
-//   }).format(new Date(date));
-
-// function CityItem({ city }) {
-//   const { currentCity, deleteCity } = useCities();
-//   const { name, emoji, date, id, position, oneliner } = city;
-//   function handleClick(e) {
-//     e.preventDefault();
-//     deleteCity(id);
-//   }
-
-//   return (
-//     <li>
-//       <Link
-//         className={`${styles.cityItem} ${
-//           id === currentCity.id ? styles["cityItem--active"] : ""
-//         }`}
-//         to={`${id}?lat=${position.lat}&lng=${position.lng}`}
-//       >
-//         <h3 className={styles.name}>{name}</h3>
-//         <h3 className={styles.oneLiner}>{oneliner}</h3>
-
-//         {/* code below deletes the data but it is commented out now */}
-//         {/*
-//         <button className={styles.deleteBtn} onClick={handleClick}>
-//           x
-//         </button> */}
-//       </Link>
-//     </li>
-//   );
-// }
-
-// export default CityItem;
-
-// ... (other imports)
 import React, { useState } from "react";
-import { useCities } from "../contexts/CitiesContext";
-import styles from "./CityItem.module.css";
+import { useEnterprises } from "../contexts/EnterprisesContext";
+import styles from "./EnterpriseItem.module.css";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en", {
@@ -52,8 +9,8 @@ const formatDate = (date) =>
     year: "numeric",
   }).format(new Date(date));
 
-function CityItem({ city }) {
-  const { currentCity, deleteCity } = useCities();
+function EnterpriseItem({ city }) {
+  const { currentEnterprise, deleteCity } = useEnterprises();
   const {
     name,
     cityname,
@@ -65,6 +22,7 @@ function CityItem({ city }) {
     notes,
     address,
     website,
+    number,
   } = city;
 
   // State to manage expanded/collapsed state
@@ -83,11 +41,11 @@ function CityItem({ city }) {
     <li>
       <div
         className={`${styles.cityItem} ${
-          id === currentCity.id ? styles["cityItem--active"] : ""
+          id === currentEnterprise.id ? styles["cityItem--active"] : ""
         }`}
         onClick={handleToggleExpand}
       >
-        <h3 className={styles.name}>{name}</h3>
+        {!isExpanded && <h3 className={styles.name}>{name}</h3>}
 
         {!isExpanded && <p className={styles.oneliner}>{oneliner}</p>}
 
@@ -111,8 +69,13 @@ function CityItem({ city }) {
             )}
 
             <div className={styles.row}>
-              <h6>{name}'s address </h6>
+              <h6> address </h6>
               <p>{address}</p>
+            </div>
+
+            <div className={styles.row}>
+              <h6> phone number </h6>
+              <p>{number}</p>
             </div>
 
             <div className={styles.row}>
@@ -131,4 +94,4 @@ function CityItem({ city }) {
   );
 }
 
-export default CityItem;
+export default EnterpriseItem;

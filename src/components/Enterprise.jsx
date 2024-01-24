@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import styles from "./City.module.css";
+import styles from "./Enterprise.module.css";
 import { useEffect } from "react";
-import { useCities } from "../contexts/CitiesContext";
+import { useEnterprises } from "../contexts/EnterprisesContext";
 import Spinner from "./Spinner";
 import BackButton from "./BackButton";
 
@@ -13,19 +13,19 @@ const formatDate = (date) =>
     weekday: "long",
   }).format(new Date(date));
 
-function City() {
+function Enterprise() {
   const { id } = useParams();
 
-  const { getCity, currentCity, isLoading } = useCities();
+  const { getEnterprise, currentEnterprise, isLoading } = useEnterprises();
 
   useEffect(
     function () {
-      getCity(id);
+      getEnterprise(id);
     },
     [id]
   );
 
-  const { name, date, notes, website, address } = currentCity;
+  const { name, date, notes, website, address, number } = currentEnterprise;
 
   if (isLoading) return <Spinner />;
 
@@ -69,4 +69,4 @@ function City() {
   );
 }
 
-export default City;
+export default Enterprise;

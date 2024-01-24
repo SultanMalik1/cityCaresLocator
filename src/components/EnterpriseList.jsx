@@ -1,12 +1,12 @@
-import CityItem from "./CityItem";
-import styles from "./CityList.module.css";
+import EnterpriseItem from "./EnterpriseItem";
+import styles from "./EnterpriseList.module.css";
 import Spinner from "./Spinner";
 import Message from "./Message";
-import { useCities } from "../contexts/CitiesContext";
+import { useEnterprises } from "../contexts/EnterprisesContext";
 import { useState } from "react";
 
-function CityList() {
-  const { cities, isLoading, filterCities } = useCities();
+function EnterpriseList() {
+  const { enterprises, isLoading, filterEnterprises } = useEnterprises();
 
   // State to store the search input
   const [searchInput, setSearchInput] = useState("");
@@ -16,11 +16,11 @@ function CityList() {
     setSearchInput(e.target.value);
   };
 
-  // Filter cities based on search input
-  const filteredCities = filterCities(searchInput);
+  // Filter enterprises based on search input
+  const filteredCities = filterEnterprises(searchInput);
 
   if (isLoading) return <Spinner />;
-  if (!cities.length)
+  if (!enterprises.length)
     return (
       <Message message="Add your first business or service by clicking on the map plz" />
     );
@@ -36,14 +36,14 @@ function CityList() {
         className={styles.searchInput}
       />
 
-      {/* Display filtered cities */}
+      {/* Display filtered enterprises */}
       <ul className={styles.CityList}>
         {filteredCities.map((city) => (
-          <CityItem city={city} key={city.id} />
+          <EnterpriseItem city={city} key={city.id} />
         ))}
       </ul>
     </div>
   );
 }
 
-export default CityList;
+export default EnterpriseList;

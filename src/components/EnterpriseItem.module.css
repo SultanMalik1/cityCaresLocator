@@ -7,7 +7,7 @@
   background-color: var(--color-dark--2);
   border-radius: 7px;
   padding: 2rem 4rem;
-  border-left: 5px solid var(--color-brand--2);
+  border-left: 5px solid var(--color-brand--1);
   cursor: pointer;
 
   color: inherit;
@@ -37,7 +37,7 @@
 }
 
 .scrollableNotes {
-  max-width: 300px; /* Adjust the maximum height as needed */
+  max-width: 100rem; /* Adjust the maximum height as needed */
   overflow-y: auto;
   word-wrap: break-word; /* Ensure long words are wrapped */
 }
