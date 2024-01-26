@@ -1,21 +1,20 @@
 .sidebar {
-  flex-basis: 75rem;
+  flex-basis: 86rem;
   background-color: var(--color-dark--1);
   padding: 3rem 5rem 3.5rem 5rem;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* height: calc(100vh - 4.8rem); */
-  height: calc(100vh);
+  height: 100vh;
+  transition: flex-basis 0.3s, width 0.3s; /* Add transition for smooth animation */
+  position: relative;
 }
 
-/* Media query for smaller screens (e.g., mobile devices) */
-
 /* Hide scrollbar for Chrome, Safari, and Opera */
-/* .sidebar::-webkit-scrollbar {
+.sidebar::-webkit-scrollbar {
   width: 0.5em;
-} */
+}
 
 .sidebar::-webkit-scrollbar-thumb {
   background-color: var(--color-dark--2);

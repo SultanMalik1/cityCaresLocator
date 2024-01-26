@@ -18,15 +18,20 @@ function Sidebar() {
       }`}
     >
       <Logo />
-      {isSidebarCollapsed ? (
-        <button className={styles.expandButton} onClick={handleToggleSidebar}>
-          Collapse the Map
-        </button>
-      ) : (
-        <button className={styles.collapseButton} onClick={handleToggleSidebar}>
-          Expand the Map
-        </button>
-      )}
+      <div>
+        {isSidebarCollapsed ? (
+          <button className={styles.expandButton} onClick={handleToggleSidebar}>
+            Collapse the Map
+          </button>
+        ) : (
+          <button
+            className={styles.collapseButton}
+            onClick={handleToggleSidebar}
+          >
+            Expand the Map
+          </button>
+        )}
+      </div>
       <AppNav />
       <Outlet />
       <footer className={styles.footer}>Copy right</footer>
