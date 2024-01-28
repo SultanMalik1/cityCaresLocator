@@ -30,7 +30,7 @@ function EnterpriseList() {
       {/* Search input field */}
       <input
         type="text"
-        placeholder="Search by name, category or location"
+        placeholder="Search for food, shelter, or jobs"
         value={searchInput}
         onChange={handleSearchInputChange}
         className={styles.searchInput}
