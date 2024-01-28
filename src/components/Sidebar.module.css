@@ -56,5 +56,5 @@
 }
 
 .collapsed {
-  flex-basis: 0;
+  flex-basis: 10rem;
 }
