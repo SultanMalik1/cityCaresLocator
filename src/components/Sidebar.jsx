@@ -21,14 +21,14 @@ function Sidebar() {
       <div>
         {isSidebarCollapsed ? (
           <button className={styles.expandButton} onClick={handleToggleSidebar}>
-            Collapse the Map
+            Expand the Map
           </button>
         ) : (
           <button
             className={styles.collapseButton}
             onClick={handleToggleSidebar}
           >
-            Expand the Map
+            Collapse the Map
           </button>
         )}
       </div>

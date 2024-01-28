@@ -15,7 +15,7 @@ import { useMap } from "react-leaflet";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useUrlPosition } from "../hooks/useUrlPosition";
 
-function Map() {
+function Map({ isSidebarCollapsed }) {
   const { enterprises } = useEnterprises();
   const [mapPosition, setMapPosition] = useState([
     40.77206305312022, -73.9627399862185,
@@ -52,7 +52,7 @@ function Map() {
       <MapContainer
         center={mapPosition}
         // center={[mapLat, mapLng]}
-        zoom={17}
+        zoom={12}
         scrollWheelZoom={true}
         className={styles.map}
       >
