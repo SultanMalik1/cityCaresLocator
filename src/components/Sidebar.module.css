@@ -1,5 +1,4 @@
 .sidebar {
-  flex-basis: 32rem;
   background-color: var(--color-dark--1);
   padding: 3rem 5rem 3.5rem 5rem;
   overflow-y: scroll;
@@ -9,6 +8,18 @@
   height: 100vh;
   transition: flex-basis 0.3s; /* Add transition for smooth animation */
   position: relative;
+}
+
+/* Default flex-basis for desktop */
+.sidebar {
+  flex-basis: 45rem;
+}
+
+/* Media query for phone */
+@media (max-width: 768px) {
+  .sidebar {
+    flex-basis: 32rem;
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari, and Opera */
