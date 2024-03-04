@@ -3,8 +3,8 @@
   height: calc(100vh);
   margin: 0;
   background-image: linear-gradient(
-      rgba(85, 93, 97, 0.368),
-      rgba(51, 62, 70, 0.419)
+      rgba(60, 65, 68, 0.368),
+      rgba(10, 11, 12, 0.419)
     ),
     url("/bg.jpg");
   background-size: cover;
@@ -52,15 +52,15 @@
 
 .homepage p {
   font-size: 1.8rem;
-  line-height: 1.3;
+  line-height: 1.9;
   font-weight: bold;
-  background-color: rgba(61, 56, 56, 0.326);
+  background-color: rgba(39, 36, 36, 0.439);
 }
 
 .homepage h2 {
   width: 90%;
   font-size: 2.8rem;
-  color: #d3fd54;
+  color: #f1f10bf5;
   margin-bottom: 2rem;
 }
 
