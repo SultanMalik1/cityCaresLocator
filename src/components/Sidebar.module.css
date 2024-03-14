@@ -12,7 +12,7 @@
 
 /* Default flex-basis for desktop */
 .sidebar {
-  flex-basis: 45rem;
+  flex-basis: 60rem;
 }
 
 /* Media query for phone */
