@@ -22,8 +22,10 @@ export default function Homepage() {
             All resources for people in unstable housing situations in one
             place.
           </p>
-          <Link to="/app/enterprises" className={styles.joinMovement}>
-            Search for organizations →
+          <Link to="/app/enterprises">
+            <button className={styles.joinMovement}>
+              Search for organizations →
+            </button>
           </Link>
           <p className={styles.note}>
             Explore this map for details on organizations aiding those in
