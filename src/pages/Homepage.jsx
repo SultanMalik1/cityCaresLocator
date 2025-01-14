@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "./Homepage.module.css";
 
 export default function Homepage() {
@@ -21,9 +22,9 @@ export default function Homepage() {
             All resources for people in unstable housing situations in one
             place.
           </p>
-          <button className={styles.joinMovement}>
+          <Link to="/app/enterprises" className={styles.joinMovement}>
             Search for organizations →
-          </button>
+          </Link>
           <p className={styles.note}>
             Explore this map for details on organizations aiding those in
             unstable housing. Easily find phone numbers, websites, descriptions,
