@@ -1,21 +1,11 @@
-/* Ensures the hero takes the full viewport height */
 .hero {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Full screen height on computer */
+  min-height: 100vh;
   padding: 50px;
   background-color: #0d1117;
   color: #ffffff;
-}
-.textContent {
-  max-width: 600px;
-}
-
-.textContent p {
-  font-size: 1.6rem;
-  line-height: 1.8;
-  margin-bottom: 20px;
 }
 
 .container {
@@ -59,19 +49,28 @@ h2 {
 }
 
 .joinMovement {
+  display: inline-block;
   background-color: #00b37e;
   color: #ffffff;
   border: none;
   padding: 15px 30px;
   font-size: 18px;
+  font-weight: bold;
+  text-align: center;
   border-radius: 5px;
   cursor: pointer;
   margin: 20px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.joinMovement:hover {
+  background-color: #008c5a;
 }
 
 .note {
   font-size: 14px;
   color: #cccccc;
+  margin-top: 10px;
 }
 
 .imageContent {
