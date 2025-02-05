@@ -1,0 +1,49 @@
+{
+  "cities": [
+    {
+      "name": "Witness",
+      "cityName": "New York",
+      "oneLiner": "We help formerly incarcerated people with economic opportunity",
+      "fivebasics": "food",
+      "country": "United States of America ",
+      "emoji": "🇺🇸",
+      "date": "2021-01-09T05:00:00.000Z",
+      "notes": "assfasd",
+      "position": {
+        "lat": "40.77305160541262",
+        "lng": "-73.96583966900344"
+      },
+      "address": "5th ave 42nd street",
+      "website": "https://www.youtube.com",
+      "id": 1
+    },
+    {
+      "name": "Test",
+      "cityName": "New York",
+      "country": "United States of America ",
+      "oneLiner": "testliner",
+      "emoji": "🇺🇸",
+      "date": "2024-01-10T02:43:00.466Z",
+      "notes": "test",
+      "position": {
+        "lat": "40.77184126163694",
+        "lng": "-73.96368325248855"
+      },
+      "address": "5th ave 42nd street",
+      "website": "https://www.youtube.com",
+      "id": 2
+    },
+    {
+      "cityName": "Test",
+      "country": "United States of America (the)",
+      "emoji": "🇺🇸",
+      "date": "2024-01-20T00:49:52.622Z",
+      "notes": "notes test\n",
+      "position": {
+        "lat": "40.737798117571344",
+        "lng": "-74.00046820748614"
+      },
+      "id": 3
+    }
+  ]
+}
