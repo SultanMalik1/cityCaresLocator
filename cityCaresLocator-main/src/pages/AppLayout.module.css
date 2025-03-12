@@ -1,0 +1,23 @@
+.app {
+  height: 100vh;
+  overscroll-behavior-y: none;
+  display: flex;
+  position: relative;
+  transition: margin-left 0.3s; /* Add transition for smooth animation */
+}
+
+/* Media query for smaller screens (e.g., mobile devices) */
+@media screen and (max-width: 768px) {
+  .app {
+    flex-direction: column; /* Stack components vertically */
+    margin-left: 0; /* Reset margin for small screens */
+  }
+
+  .app > * {
+    width: 100%;
+  }
+
+  .app > .sidebar {
+    display: none;
+  }
+}
