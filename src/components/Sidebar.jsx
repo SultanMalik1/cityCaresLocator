@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
-import styles from "./Sidebar.module.css";
-import Logo from "./Logo";
-import AppNav from "./AppNav";
+import { useState } from "react"
+import { Outlet } from "react-router-dom"
+import styles from "./Sidebar.module.css"
+import Logo from "./Logo"
+import AppNav from "./AppNav"
 
 function Sidebar() {
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const handleToggleSidebar = () => {
-    setSidebarCollapsed(!isSidebarCollapsed);
-  };
+    setSidebarCollapsed(!isSidebarCollapsed)
+  }
 
   return (
     <div
@@ -36,7 +36,7 @@ function Sidebar() {
       <Outlet />
       <footer className={styles.footer}>Copyright</footer>
     </div>
-  );
+  )
 }
 
-export default Sidebar;
+export default Sidebar

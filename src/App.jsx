@@ -1,11 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-import Homepage from "./pages/Homepage";
-import PageNotFound from "./pages/PageNotFound";
-import AppLayout from "./pages/AppLayout";
-import EnterpriseList from "./components/EnterpriseList";
-import Enterprise from "./components/Enterprise";
-import { CitiesProvider } from "./contexts/EnterprisesContext";
+import Homepage from "./pages/Homepage"
+import PageNotFound from "./pages/PageNotFound"
+import AppLayout from "./pages/AppLayout"
+import EnterpriseList from "./components/EnterpriseList"
+import Enterprise from "./components/Enterprise"
+import { CitiesProvider } from "./contexts/EnterprisesContext"
+import About from "./pages/About"
 
 function App() {
   return (
@@ -18,11 +19,12 @@ function App() {
             <Route path="enterprises" element={<EnterpriseList />} />
             <Route path="enterprises/:id" element={<Enterprise />} />
           </Route>
+          <Route path="about" element={<About />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>
     </CitiesProvider>
-  );
+  )
 }
 
-export default App;
+export default App
