@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import styles from "./HomePage.module.css"
+import styles from "./Homepage.module.css"
 
 const initiatives = [
   {
