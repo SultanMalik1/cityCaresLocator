@@ -110,7 +110,7 @@ Give this project a ⭐ on [GitHub](https://github.com/YOUR_GITHUB_USERNAME/City
 ---
 
 ## 📬 Contact
-- **Email:** [smalik.dev@gmail.com]
+- **Email:** [sultanmalik.dev@gmail.com]
 
 ---
 
