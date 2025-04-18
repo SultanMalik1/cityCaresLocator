@@ -85,7 +85,11 @@ function Map({ isSidebarCollapsed }) {
             <p>{selectedEnterprise.oneliner}</p>
             <div className={styles.buttonContainer}>
               {selectedEnterprise.website && (
-                <a href={selectedEnterprise.website}>
+                <a
+                  href={selectedEnterprise.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <button className={styles.websiteButton}>Visite Site</button>
                 </a>
               )}
