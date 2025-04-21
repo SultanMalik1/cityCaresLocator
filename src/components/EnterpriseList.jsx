@@ -7,6 +7,7 @@ import { useState } from "react";
 
 function EnterpriseList() {
   const { enterprises, isLoading, filterEnterprises } = useEnterprises();
+  const [expandedId, setExpandedId] = useState(null);
 
   // State to store the search input
   const [searchInput, setSearchInput] = useState("");
@@ -26,7 +27,7 @@ function EnterpriseList() {
     );
 
   return (
-    <div>
+    <div className={styles.container}>
       {/* Search input field */}
       <input
         type="text"
@@ -39,7 +40,12 @@ function EnterpriseList() {
       {/* Display filtered enterprises */}
       <ul className={styles.CityList}>
         {filteredCities.map((city) => (
-          <EnterpriseItem city={city} key={city.id} />
+          <EnterpriseItem 
+            city={city} 
+            key={city.id} 
+            isExpanded={city.id === expandedId}
+            onToggleExpand={() => setExpandedId(city.id === expandedId ? null : city.id)}
+          />
         ))}
       </ul>
     </div>

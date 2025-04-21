@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useEnterprises } from "../contexts/EnterprisesContext";
 import styles from "./EnterpriseItem.module.css";
 
@@ -9,7 +9,7 @@ const formatDate = (date) =>
     year: "numeric",
   }).format(new Date(date));
 
-function EnterpriseItem({ city }) {
+function EnterpriseItem({ city, isExpanded, onToggleExpand }) {
   const { currentEnterprise, deleteCity } = useEnterprises();
   const {
     name,
@@ -23,14 +23,9 @@ function EnterpriseItem({ city }) {
     address,
     website,
     number,
+    propublica_url,
+    guidestar_url,
   } = city;
-
-  // State to manage expanded/collapsed state
-  const [isExpanded, setExpanded] = useState(false);
-
-  function handleToggleExpand() {
-    setExpanded(!isExpanded);
-  }
 
   function handleClick(e) {
     e.preventDefault();
@@ -43,7 +38,7 @@ function EnterpriseItem({ city }) {
         className={`${styles.cityItem} ${
           id === currentEnterprise.id ? styles["cityItem--active"] : ""
         }`}
-        onClick={handleToggleExpand}
+        onClick={onToggleExpand}
       >
         {!isExpanded && <h3 className={styles.name}>{name}</h3>}
 
@@ -74,17 +69,28 @@ function EnterpriseItem({ city }) {
             </div>
 
             <div className={styles.row}>
-              <h6> phone number </h6>
-              <p>{number}</p>
-            </div>
-
-            <div className={styles.row}>
               <h6> Website </h6>
 
               <h6>
                 <a href={website} target="_blank" rel="noopener noreferrer">
                   {website}
                 </a>
+              </h6>
+            </div>
+            <div>
+              <h6>
+                More Details (View in Private Mode for free)
+              </h6>
+              <h6>
+                <a href ={guidestar_url} target ="_blank" rel="nonopener noreferrer">link</a>
+              </h6>
+            </div>
+            <div>
+              <h6>
+                Revenue and Expense 
+              </h6>
+              <h6>
+                <a href ={propublica_url} target ="_blank" rel="nonopener noreferrer">link</a>
               </h6>
             </div>
           </div>

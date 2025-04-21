@@ -82,7 +82,7 @@ function Map({ isSidebarCollapsed }) {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h2>{selectedEnterprise.name}</h2>
-            <p>{selectedEnterprise.oneliner}</p>
+            <p>{selectedEnterprise.notes}</p>
             <div className={styles.buttonContainer}>
               {selectedEnterprise.website && (
                 <a
