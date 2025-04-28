@@ -5,13 +5,13 @@ const initiatives = [
   {
     title: "Community Outreach",
     description:
-      "We’re building bridges between people and the organizations that serve them. Whether it’s food, shelter, legal aid, or support groups, our outreach efforts aim to connect individuals with services that make a real difference in their lives.",
+      "We're building bridges between people and the organizations that serve them. Whether it's food, shelter, legal aid, or support groups, our outreach efforts aim to connect individuals with services that make a real difference in their lives.",
     bgColor: styles.greenCard,
   },
   {
     title: "Youth Education",
     description:
-      "We’re working on updating our map to make it easier for young people to find volunteer opportunities. By connecting youth with mentorship programs, community service initiatives, and organizations in need of support, we’re helping them build confidence, leadership skills, and a stronger sense of purpose.",
+      "We're working on updating our map to make it easier for young people to find volunteer opportunities. By connecting youth with mentorship programs, community service initiatives, and organizations in need of support, we're helping them build confidence, leadership skills, and a stronger sense of purpose.",
     bgColor: styles.yellowCard,
   },
   {
@@ -90,8 +90,8 @@ export default function HomePage() {
       <section className={styles.featuresSection}>
         <h2 className={styles.featuresHeading}>Upcoming Features</h2>
         <p className={styles.featuresIntro}>
-          We’re constantly building to make CityCares more powerful, accessible,
-          and community-driven. Here’s what’s coming soon:
+          We're constantly building to make CityCares more powerful, accessible,
+          and community-driven. Here's what's coming soon:
         </p>
 
         <div className={styles.featuresGrid}>
@@ -110,7 +110,7 @@ export default function HomePage() {
             <div>
               <h3 className={styles.featureTitle}>Expanded Listings</h3>
               <p className={styles.featureDescription}>
-                We’re adding all NYC shelters, food banks, and community orgs to
+                We're adding all NYC shelters, food banks, and community orgs to
                 make sure no one is left out.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function HomePage() {
             Connecting Hearts and Helping Hands
           </h2>
           <p className={styles.aboutSubheading}>
-            Together, we’re creating a stronger, more compassionate New York
+            Together, we're creating a stronger, more compassionate New York
             City.
           </p>
           <p className={styles.aboutParagraph}>
@@ -181,7 +181,7 @@ export default function HomePage() {
             personalized filters to help people get the help they need, fast.
             <br />
             <br />
-            This isn’t just a project — it’s a mission. One based on trust,
+            This isn't just a project — it's a mission. One based on trust,
             care, and community. Because when people are supported,
             neighborhoods thrive.
           </p>
@@ -200,7 +200,15 @@ export default function HomePage() {
         <div className={styles.footerInner}>
           <h2 className={styles.footerBrand}>City Cares Locator</h2>
           <div className={styles.footerInfo}>
-            <p>sultanmalik.dev@gmail.com</p>
+            <p>Developed by Sultan Malik</p>
+            <a 
+              href="https://www.linkedin.com/in/smalikk/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={styles.linkedinLink}
+            >
+              Connect with me on LinkedIn
+            </a>
           </div>
           <p className={styles.footerAddress}>New York City</p>
         </div>

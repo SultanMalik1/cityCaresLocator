@@ -34,7 +34,6 @@ function Sidebar() {
       </div>
       <AppNav />
       <Outlet />
-      <footer className={styles.footer}>Copyright</footer>
     </div>
   );
 }

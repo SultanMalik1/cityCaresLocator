@@ -132,6 +132,14 @@
   align-self: flex-start;
 }
 
+@media (max-width: 768px) {
+  .leftPanel {
+    position: static;
+    flex: 1 1 100%;
+    margin-bottom: 2rem;
+  }
+}
+
 .heading {
   font-size: 5rem;
   color: #4b2d1c;
