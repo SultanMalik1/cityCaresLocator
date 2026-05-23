@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar"
 import Map from "../components/Map"
 import ErrorBoundary from "../components/ErrorBoundary"
 import { SelectionProvider } from "../contexts/SelectionContext"
+import { FilterProvider } from "../contexts/FilterContext"
 import { useIsMobile } from "../hooks/useIsMobile"
 import styles from "./AppLayout.module.css"
 
@@ -73,6 +74,7 @@ function AppLayout() {
 
   return (
     <SelectionProvider>
+      <FilterProvider>
       <div
         ref={appRef}
         className={`${styles.app} ${isDragging ? styles.appDragging : ""}`}
@@ -104,6 +106,7 @@ function AppLayout() {
           </ErrorBoundary>
         </div>
       </div>
+      </FilterProvider>
     </SelectionProvider>
   )
 }

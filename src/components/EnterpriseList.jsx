@@ -5,22 +5,27 @@ import Spinner from "./Spinner"
 import Message from "./Message"
 import { useEnterprises } from "../contexts/EnterprisesContext"
 import { useSelection } from "../contexts/SelectionContext"
-import { useState } from "react"
+import { useFilter } from "../contexts/FilterContext"
+import { NEEDS } from "../constants/needs"
 
 function EnterpriseList() {
+  const { isLoading, error, isSupabaseConfigured, enterprises } = useEnterprises()
   const {
-    enterprises,
-    isLoading,
-    error,
-    isSupabaseConfigured,
-    filterEnterprises,
-  } = useEnterprises()
+    search,
+    setSearch,
+    selectedNeeds,
+    toggleNeed,
+    clearFilters,
+    hasActiveFilters,
+    filteredOrganizations,
+  } = useFilter()
   const { selectedOrganizationId } = useSelection()
-  const [searchInput, setSearchInput] = useState("")
   const itemRefs = useRef({})
 
   const list = Array.isArray(enterprises) ? enterprises : []
-  const filteredCities = filterEnterprises(searchInput)
+  const filteredCities = Array.isArray(filteredOrganizations)
+    ? filteredOrganizations
+    : []
 
   const setItemRef = useCallback((id) => {
     return (el) => {
@@ -60,16 +65,46 @@ function EnterpriseList() {
 
   return (
     <div className={styles.container}>
-      <input
-        type="text"
-        placeholder="Search for food, shelter, or jobs"
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        className={styles.searchInput}
-      />
+      <div className={styles.filters}>
+        <div className={styles.chips} role="group" aria-label="Filter by need">
+          {NEEDS.map((need) => {
+            const isActive = selectedNeeds.includes(need.id)
+            return (
+              <button
+                key={need.id}
+                type="button"
+                className={`${styles.chip} ${isActive ? styles.chipActive : ""}`}
+                onClick={() => toggleNeed(need.id)}
+                aria-pressed={isActive}
+              >
+                {need.label}
+              </button>
+            )
+          })}
+        </div>
+
+        <input
+          type="search"
+          placeholder="Search by name or keyword"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={styles.searchInput}
+          aria-label="Search organizations"
+        />
+
+        {hasActiveFilters && (
+          <button
+            type="button"
+            className={styles.clearFilters}
+            onClick={clearFilters}
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
 
       {filteredCities.length === 0 ? (
-        <Message message="No organizations match your search." />
+        <Message message="No organizations match these filters." />
       ) : (
         <ul className={styles.CityList}>
           {filteredCities.map((city) => (

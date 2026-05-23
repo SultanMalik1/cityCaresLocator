@@ -1,5 +1,6 @@
 import styles from "./Map.module.css"
 import { useEnterprises } from "../contexts/EnterprisesContext"
+import { useFilter } from "../contexts/FilterContext"
 import { useSelection } from "../contexts/SelectionContext"
 import L from "leaflet"
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet"
@@ -50,10 +51,11 @@ function Map({ layoutKey = 0 }) {
 }
 
 function MapView({ layoutKey }) {
-  const { enterprises } = useEnterprises()
+  const { filteredOrganizations } = useFilter()
   const organizations = useMemo(
-    () => (Array.isArray(enterprises) ? enterprises : []),
-    [enterprises]
+    () =>
+      Array.isArray(filteredOrganizations) ? filteredOrganizations : [],
+    [filteredOrganizations]
   )
   const { selectedOrganizationId, selectOrganization } = useSelection()
 

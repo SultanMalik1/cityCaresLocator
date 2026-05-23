@@ -3,7 +3,6 @@ import {
   useState,
   useEffect,
   useContext,
-  useCallback,
   useMemo,
 } from "react"
 import { getData } from "../hooks/apiResources"
@@ -35,31 +34,14 @@ function CitiesProvider({ children }) {
     fetchEnterprises()
   }, [])
 
-  const filterEnterprises = useCallback(
-    (searchInput) => {
-      const list = Array.isArray(enterprises) ? enterprises : []
-      const query = searchInput.trim().toLowerCase()
-      if (!query) return list
-
-      return list.filter(
-        (item) =>
-          item.name?.toLowerCase().includes(query) ||
-          item.oneliner?.toLowerCase().includes(query) ||
-          (item.notes && item.notes.toLowerCase().includes(query))
-      )
-    },
-    [enterprises]
-  )
-
   const value = useMemo(
     () => ({
       enterprises,
       isLoading,
       error,
       isSupabaseConfigured,
-      filterEnterprises,
     }),
-    [enterprises, isLoading, error, filterEnterprises]
+    [enterprises, isLoading, error]
   )
 
   return (
