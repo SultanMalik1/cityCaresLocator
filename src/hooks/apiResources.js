@@ -1,4 +1,5 @@
 import supabase, { isSupabaseConfigured } from "./supabase"
+import { ORGANIZATION_STATUS } from "../constants/organizationStatus"
 
 const ORGANIZATIONS_TABLE = "organizations"
 
@@ -14,7 +15,7 @@ function toError(error, fallback) {
   return new Error(error?.message || fallback)
 }
 
-/** All organizations for the public map (Phase 5). */
+/** Public map: approved organizations only (Phase 6). */
 export async function getOrganizations() {
   const client = assertSupabase()
   if (!client) return []
@@ -22,6 +23,7 @@ export async function getOrganizations() {
   const { data, error } = await client
     .from(ORGANIZATIONS_TABLE)
     .select("*")
+    .eq("status", ORGANIZATION_STATUS.APPROVED)
     .order("name", { ascending: true })
 
   if (error) throw toError(error, "Organizations could not be loaded")
@@ -29,7 +31,7 @@ export async function getOrganizations() {
   return Array.isArray(data) ? data : []
 }
 
-/** Single organization by primary key. Returns null when not found. */
+/** Public detail: approved organization only, or null if missing / not approved. */
 export async function getOrganizationById(id) {
   const client = assertSupabase()
   if (!client) return null
@@ -40,6 +42,7 @@ export async function getOrganizationById(id) {
     .from(ORGANIZATIONS_TABLE)
     .select("*")
     .eq("id", id)
+    .eq("status", ORGANIZATION_STATUS.APPROVED)
     .single()
 
   if (error) {

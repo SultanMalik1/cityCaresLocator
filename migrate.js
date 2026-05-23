@@ -239,7 +239,13 @@ async function migrate() {
         id integer NOT NULL DEFAULT nextval('public.organizations_id_seq'::regclass),
         propublica_url character varying(255),
         guidestar_url character varying(255),
-        CONSTRAINT organizations_pkey PRIMARY KEY (id)
+        status text NOT NULL DEFAULT 'approved',
+        created_by uuid,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now(),
+        CONSTRAINT organizations_pkey PRIMARY KEY (id),
+        CONSTRAINT organizations_status_check
+          CHECK (status IN ('pending', 'approved', 'rejected'))
       );
     `);
 
@@ -250,10 +256,11 @@ async function migrate() {
     const insertSql = `
       INSERT INTO public.organizations (
         name, cityname, oneliner, fivebasics, emoji, date, notes,
-        "position", address, website, number, id, propublica_url, guidestar_url
+        "position", address, website, number, id, propublica_url, guidestar_url,
+        status
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7,
-        $8::jsonb, $9, $10, $11, $12, $13, $14
+        $8::jsonb, $9, $10, $11, $12, $13, $14, 'approved'
       )
     `;
 

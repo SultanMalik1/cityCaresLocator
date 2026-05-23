@@ -60,7 +60,7 @@ function EnterpriseList() {
 
   if (!list.length) {
     return (
-      <Message message="No organizations found yet. Check your Supabase organizations table." />
+      <Message message="No approved organizations found. In Supabase, check that organizations.status is 'approved' for rows you expect on the map." />
     )
   }
 
