@@ -5,22 +5,24 @@ export default function HomePage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <span className={styles.logo}>City Cares Locator</span>
-        <Link to="/app/enterprises" className={styles.navLink}>
+        <span className={styles.logo}>CityCares Locator</span>
+        <Link to="/app" className={styles.navLink}>
           Map
         </Link>
       </header>
 
       <main className={styles.main}>
+        <p className={styles.eyebrow}>New York City</p>
         <h1 className={styles.title}>
-          Housing support resources in New York City
+          Find housing and community support near you
         </h1>
         <p className={styles.lead}>
-          A map of organizations helping people facing unstable housing.
-          Find shelters, food banks, legal aid, and community services near you.
+          A minimal map of nonprofits, shelters, food banks, and services for
+          people facing unstable housing. Search by need and explore what is
+          around you.
         </p>
-        <Link to="/app/enterprises" className={styles.cta}>
-          Open map →
+        <Link to="/app" className={styles.cta}>
+          Explore the map
         </Link>
       </main>
 

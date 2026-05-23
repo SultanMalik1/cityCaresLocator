@@ -1,23 +1,86 @@
 .app {
   height: 100vh;
+  height: 100dvh;
   overscroll-behavior-y: none;
   display: flex;
-  position: relative;
-  transition: margin-left 0.3s; /* Add transition for smooth animation */
+  flex-direction: row;
+  background-color: var(--color-bg);
 }
 
-/* Media query for smaller screens (e.g., mobile devices) */
+.appDragging {
+  cursor: row-resize;
+}
+
+.sidebarPanel {
+  flex-shrink: 0;
+  width: min(420px, 38vw);
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  overflow: hidden;
+}
+
+.mapPanel {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.resizeHandle {
+  display: none;
+}
+
 @media screen and (max-width: 768px) {
   .app {
-    flex-direction: column; /* Stack components vertically */
-    margin-left: 0; /* Reset margin for small screens */
+    flex-direction: column;
   }
 
-  .app > * {
+  .sidebarPanel {
     width: 100%;
+    min-width: unset;
+    flex: none;
+    border-right: none;
+    border-bottom: none;
   }
 
-  .app > .sidebar {
-    display: none;
+  .resizeHandle {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    height: 2.8rem;
+    width: 100%;
+    cursor: row-resize;
+    touch-action: none;
+    background-color: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 10;
+  }
+
+  .resizeHandle:active {
+    background-color: var(--color-bg-subtle);
+  }
+
+  .resizeBar {
+    display: block;
+    width: 4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background-color: var(--color-border);
+  }
+
+  .resizeHandle:active .resizeBar {
+    background-color: var(--color-text-muted);
+  }
+
+  .mapPanel {
+    flex: 1 1 0;
+    min-height: 0;
   }
 }

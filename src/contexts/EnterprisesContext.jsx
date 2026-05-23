@@ -1,85 +1,80 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { getData } from "../hooks/apiResources";
-import supabase from "../hooks/supabase";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useMemo,
+} from "react"
+import { getData } from "../hooks/apiResources"
+import { isSupabaseConfigured } from "../hooks/supabase"
 
-const EnterprisesContext = createContext();
+const EnterprisesContext = createContext()
 
 function CitiesProvider({ children }) {
-  const [enterprises, setEnterprises] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentEnterprise, setcurrentEnterprise] = useState({});
+  const [enterprises, setEnterprises] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     async function fetchEnterprises() {
       try {
-        setIsLoading(true);
-
-        // Replace the fetch call with getData
-        const data = await getData();
-
-        // Set the fetched data using the setEnterprises function
-        setEnterprises(data);
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
-        alert("There was an error fetching data");
+        setIsLoading(true)
+        setError(null)
+        const data = await getData()
+        setEnterprises(data)
+      } catch (err) {
+        console.error("Error fetching data:", err.message)
+        setError(err.message || "Could not load organizations")
+        setEnterprises([])
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
     }
 
-    // Call the fetchEnterprises function when the component mounts
-    fetchEnterprises();
-  }, []);
+    fetchEnterprises()
+  }, [])
 
-  async function getEnterprise(id) {
-    try {
-      setIsLoading(true);
-      const data = await getData();
+  const filterEnterprises = useCallback(
+    (searchInput) => {
+      const list = Array.isArray(enterprises) ? enterprises : []
+      const query = searchInput.trim().toLowerCase()
+      if (!query) return list
 
-      // Check if the city already exists in the array
-      if (!enterprises.some((city) => city.id === data.id)) {
-        setEnterprises((enterprises) => [...enterprises, data]); // Append only if it doesn't exist
-      }
+      return list.filter(
+        (item) =>
+          item.name?.toLowerCase().includes(query) ||
+          item.oneliner?.toLowerCase().includes(query) ||
+          (item.notes && item.notes.toLowerCase().includes(query))
+      )
+    },
+    [enterprises]
+  )
 
-      setcurrentEnterprise(data);
-    } catch (error) {
-      console.error("Error getting city:", error.message);
-      alert("There was an error getting city");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  function filterEnterprises(searchInput) {
-    return enterprises.filter(
-      (item) =>
-        item.name?.toLowerCase()?.includes(searchInput.toLowerCase()) ||
-        item.onliner?.toLowerCase()?.includes(searchInput.toLowerCase()) ||
-        (item.notes &&
-          item.notes.toLowerCase().includes(searchInput.toLowerCase()))
-    );
-  }
+  const value = useMemo(
+    () => ({
+      enterprises,
+      isLoading,
+      error,
+      isSupabaseConfigured,
+      filterEnterprises,
+    }),
+    [enterprises, isLoading, error, filterEnterprises]
+  )
 
   return (
-    <EnterprisesContext.Provider
-      value={{
-        enterprises,
-        isLoading,
-        currentEnterprise,
-        getEnterprise,
-        filterEnterprises,
-      }}
-    >
+    <EnterprisesContext.Provider value={value}>
       {children}
     </EnterprisesContext.Provider>
-  );
+  )
 }
 
 function useEnterprises() {
-  const context = useContext(EnterprisesContext);
-  if (context === undefined)
-    throw new Error("Cities Context was used outside the enterprises Provider");
-  return context;
+  const context = useContext(EnterprisesContext)
+  if (context === undefined) {
+    throw new Error("useEnterprises must be used within CitiesProvider")
+  }
+  return context
 }
 
-export { CitiesProvider, useEnterprises };
+export { CitiesProvider, useEnterprises }

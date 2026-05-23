@@ -1,55 +1,88 @@
-import EnterpriseItem from "./EnterpriseItem";
-import styles from "./EnterpriseList.module.css";
-import Spinner from "./Spinner";
-import Message from "./Message";
-import { useEnterprises } from "../contexts/EnterprisesContext";
-import { useState } from "react";
+import { useEffect, useRef, useCallback } from "react"
+import EnterpriseItem from "./EnterpriseItem"
+import styles from "./EnterpriseList.module.css"
+import Spinner from "./Spinner"
+import Message from "./Message"
+import { useEnterprises } from "../contexts/EnterprisesContext"
+import { useSelection } from "../contexts/SelectionContext"
+import { useState } from "react"
 
 function EnterpriseList() {
-  const { enterprises, isLoading, filterEnterprises } = useEnterprises();
-  const [expandedId, setExpandedId] = useState(null);
+  const {
+    enterprises,
+    isLoading,
+    error,
+    isSupabaseConfigured,
+    filterEnterprises,
+  } = useEnterprises()
+  const { selectedOrganizationId } = useSelection()
+  const [searchInput, setSearchInput] = useState("")
+  const itemRefs = useRef({})
 
-  // State to store the search input
-  const [searchInput, setSearchInput] = useState("");
+  const list = Array.isArray(enterprises) ? enterprises : []
+  const filteredCities = filterEnterprises(searchInput)
 
-  // Handler for updating the search input
-  const handleSearchInputChange = (e) => {
-    setSearchInput(e.target.value);
-  };
+  const setItemRef = useCallback((id) => {
+    return (el) => {
+      if (el) itemRefs.current[id] = el
+      else delete itemRefs.current[id]
+    }
+  }, [])
 
-  // Filter enterprises based on search input
-  const filteredCities = filterEnterprises(searchInput);
+  useEffect(() => {
+    if (!selectedOrganizationId) return
 
-  if (isLoading) return <Spinner />;
-  if (!enterprises.length)
+    const frame = requestAnimationFrame(() => {
+      const el = itemRefs.current[selectedOrganizationId]
+      el?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    })
+
+    return () => cancelAnimationFrame(frame)
+  }, [selectedOrganizationId])
+
+  if (isLoading) return <Spinner />
+
+  if (!isSupabaseConfigured) {
     return (
-      <Message message="Add your first business or service by clicking on the map plz" />
-    );
+      <Message message="Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to a .env file, then restart the dev server." />
+    )
+  }
+
+  if (error) {
+    return <Message message={error} />
+  }
+
+  if (!list.length) {
+    return (
+      <Message message="No organizations found yet. Check your Supabase organizations table." />
+    )
+  }
 
   return (
     <div className={styles.container}>
-      {/* Search input field */}
       <input
         type="text"
         placeholder="Search for food, shelter, or jobs"
         value={searchInput}
-        onChange={handleSearchInputChange}
+        onChange={(e) => setSearchInput(e.target.value)}
         className={styles.searchInput}
       />
 
-      {/* Display filtered enterprises */}
-      <ul className={styles.CityList}>
-        {filteredCities.map((city) => (
-          <EnterpriseItem 
-            city={city} 
-            key={city.id} 
-            isExpanded={city.id === expandedId}
-            onToggleExpand={() => setExpandedId(city.id === expandedId ? null : city.id)}
-          />
-        ))}
-      </ul>
+      {filteredCities.length === 0 ? (
+        <Message message="No organizations match your search." />
+      ) : (
+        <ul className={styles.CityList}>
+          {filteredCities.map((city) => (
+            <EnterpriseItem
+              city={city}
+              key={city.id}
+              ref={setItemRef(city.id)}
+            />
+          ))}
+        </ul>
+      )}
     </div>
-  );
+  )
 }
 
-export default EnterpriseList;
+export default EnterpriseList

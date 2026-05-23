@@ -1,103 +1,111 @@
-import React from "react";
-import { useEnterprises } from "../contexts/EnterprisesContext";
-import styles from "./EnterpriseItem.module.css";
+import { forwardRef } from "react"
+import styles from "./EnterpriseItem.module.css"
+import { useSelection } from "../contexts/SelectionContext"
 
-const formatDate = (date) =>
-  new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(date));
-
-function EnterpriseItem({ city, isExpanded, onToggleExpand }) {
-  const { currentEnterprise, deleteCity } = useEnterprises();
+const EnterpriseItem = forwardRef(function EnterpriseItem({ city }, ref) {
+  const { selectedOrganizationId, selectOrganization } = useSelection()
   const {
     name,
-    cityname,
-    date,
     id,
     fivebasics,
-    position,
     oneliner,
     notes,
     address,
     website,
-    number,
     propublica_url,
     guidestar_url,
-  } = city;
+  } = city
 
-  function handleClick(e) {
-    e.preventDefault();
-    deleteCity(id);
+  const isSelected = String(id) === String(selectedOrganizationId)
+
+  function handleSelect() {
+    selectOrganization(id)
+  }
+
+  function stopLinkClick(e) {
+    e.stopPropagation()
   }
 
   return (
-    <li>
+    <li ref={ref}>
       <div
         className={`${styles.cityItem} ${
-          id === currentEnterprise.id ? styles["cityItem--active"] : ""
+          isSelected ? styles["cityItem--active"] : ""
         }`}
-        onClick={onToggleExpand}
+        onClick={handleSelect}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            handleSelect()
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-pressed={isSelected}
       >
-        {!isExpanded && <h3 className={styles.name}>{name}</h3>}
+        <h3 className={styles.name}>{name}</h3>
 
-        {!isExpanded && <p className={styles.oneliner}>{oneliner}</p>}
+        {oneliner && <p className={styles.oneliner}>{oneliner}</p>}
 
-        {isExpanded && (
-          <div className={styles.profileContainer}>
-            <div className={styles.row}>
-              <h6>Name</h6>
-              <h3>{name}</h3>
-            </div>
-
-            <div className={styles.row}>
-              <h6>{name}'s main focus</h6>
-              <p>{fivebasics}</p>
-            </div>
-
-            {notes && (
-              <div className={`${styles.row} ${styles.scrollableNotes}`}>
-                <h6> About </h6>
-                <p>{notes}</p>
-              </div>
+        {isSelected && (
+          <div className={styles.detail}>
+            {fivebasics && (
+              <p className={styles.meta}>
+                <span className={styles.metaLabel}>Focus</span>
+                {fivebasics}
+              </p>
             )}
 
-            <div className={styles.row}>
-              <h6> address </h6>
-              <p>{address}</p>
-            </div>
+            {notes && <p className={styles.summary}>{notes}</p>}
 
-            <div className={styles.row}>
-              <h6> Website </h6>
+            {address && (
+              <p className={styles.meta}>
+                <span className={styles.metaLabel}>Address</span>
+                {address}
+              </p>
+            )}
 
-              <h6>
-                <a href={website} target="_blank" rel="noopener noreferrer">
-                  {website}
-                </a>
-              </h6>
-            </div>
-            <div>
-              <h6>
-                More Details (View in Private Mode for free)
-              </h6>
-              <h6>
-                <a href ={guidestar_url} target ="_blank" rel="nonopener noreferrer">link</a>
-              </h6>
-            </div>
-            <div>
-              <h6>
-                Revenue and Expense 
-              </h6>
-              <h6>
-                <a href ={propublica_url} target ="_blank" rel="nonopener noreferrer">link</a>
-              </h6>
-            </div>
+            {website && (
+              <a
+                href={website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.websiteLink}
+                onClick={stopLinkClick}
+              >
+                Visit website →
+              </a>
+            )}
+
+            {(guidestar_url || propublica_url) && (
+              <div className={styles.extraLinks}>
+                {guidestar_url && (
+                  <a
+                    href={guidestar_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={stopLinkClick}
+                  >
+                    GuideStar
+                  </a>
+                )}
+                {propublica_url && (
+                  <a
+                    href={propublica_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={stopLinkClick}
+                  >
+                    ProPublica
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
     </li>
-  );
-}
+  )
+})
 
-export default EnterpriseItem;
+export default EnterpriseItem

@@ -1,71 +1,82 @@
 .sidebar {
-  background-color: var(--color-dark--1);
-  padding: 3rem 5rem 3.5rem 5rem;
-  overflow-y: scroll;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background-color: var(--color-bg);
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
-  height: 100vh;
-  transition: flex-basis 0.3s; /* Add transition for smooth animation */
-  position: relative;
+  justify-content: space-between;
+  padding: 1.6rem 2rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Default flex-basis for desktop */
-.sidebar {
-  flex-basis: 60rem;
+.brand {
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  text-decoration: none;
 }
 
-/* Media query for phone */
-@media (max-width: 768px) {
-  .sidebar {
-    flex-basis: 32rem;
-  }
+.brand:hover {
+  color: var(--color-accent);
 }
 
-/* Hide scrollbar for Chrome, Safari, and Opera */
-.sidebar::-webkit-scrollbar {
-  width: 0.5em;
+.homeLink {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
 }
 
-.sidebar::-webkit-scrollbar-thumb {
-  background-color: var(--color-dark--2);
+.homeLink:hover {
+  color: var(--color-text);
 }
 
-/* Hide scrollbar for Firefox */
-.sidebar {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-dark--2) var(--color-dark--1);
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.2rem 2rem 1.6rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 3px;
 }
 
 .footer {
-  margin-top: auto;
+  flex-shrink: 0;
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--color-border);
 }
 
-.copyright {
+.footerText {
   font-size: 1.2rem;
-  color: var(--color-light--1);
+  color: var(--color-text-muted);
 }
 
-.expandButton,
-.collapseButton {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: var(--color-brand--1);
-  color: var(--color-dark--1);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s, color 0.3s;
-}
+@media (max-width: 768px) {
+  .header {
+    padding: 1.2rem 1.6rem;
+  }
 
-.expandButton:hover,
-.collapseButton:hover {
-  background-color: var(--color-brand--2);
-}
+  .content {
+    padding: 1rem 1.6rem 1.2rem;
+  }
 
-.collapsed {
-  flex-basis: 90rem;
+  .footer {
+    padding: 0.8rem 1.6rem;
+  }
 }

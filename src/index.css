@@ -1,19 +1,33 @@
-/* Taken from getting started guide at: https://leafletjs.com/examples/quick-start/ */
-@import "https://unpkg.com/leaflet@1.7.1/dist/leaflet.css";
-@import "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap";
+/* Leaflet base styles */
+@import "leaflet/dist/leaflet.css";
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap";
 
-/* These CSS variables are global, so they are available in all CSS modules */
+/*
+  CityCares design tokens (Phase 1 — light YC-style).
+  Legacy --color-dark--* / --color-light--* names are kept so /app
+  components keep working until later phases restyle them explicitly.
+*/
 :root {
-  --color-brand--1: #dbf393;
+  --color-bg: #ffffff;
+  --color-bg-subtle: #fafafa;
+  --color-text: #111111;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-accent: #f26522;
+  --color-accent-hover: #e05a1c;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
 
-  --color-brand--2: #e59448;
-
-  --color-dark--0: #242a2e;
-  --color-dark--1: #2d3439;
-  --color-dark--2: #42484d;
-  --color-light--1: #aaa;
-  --color-light--2: #ececec;
-  --color-light--3: #ffffff;
+  /* Legacy aliases used across CSS modules */
+  --color-brand--1: var(--color-accent);
+  --color-brand--2: var(--color-accent);
+  --color-dark--0: #111111;
+  --color-dark--1: var(--color-bg);
+  --color-dark--2: var(--color-bg-subtle);
+  --color-light--1: var(--color-text-muted);
+  --color-light--2: var(--color-text);
+  --color-light--3: var(--color-bg);
 }
 
 * {
@@ -27,16 +41,26 @@ html {
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 body {
-  font-family: "Manrope", sans-serif;
-  color: var(--color-light--2);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   font-weight: 400;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 label {
   font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--color-text);
 }
 
 input,
@@ -45,35 +69,33 @@ textarea {
   padding: 0.8rem 1.2rem;
   font-family: inherit;
   font-size: 1.6rem;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--color-light--3);
-  transition: all 0.2s;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-input:focus {
+input:focus,
+textarea:focus {
   outline: none;
-  background-color: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.15);
 }
 
 .cta:link,
 .cta:visited {
   display: inline-block;
-  background-color: var(--color-brand--2);
-  color: var(--color-dark--1);
-  text-transform: uppercase;
+  background-color: var(--color-text);
+  color: var(--color-bg);
   text-decoration: none;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  padding: 1rem 3rem;
-  border-radius: 5px;
+  padding: 1.2rem 2.4rem;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease, transform 0.15s ease;
 }
 
-/*
-"importCSSModule": {
-    "prefix": "csm",
-    "scope": "javascript,typescript,javascriptreact",
-    "body": ["import styles from './${TM_FILENAME_BASE}.module.css'"],
-    "description": "Import CSS Module as `styles`"
-  },
-*/
+.cta:hover {
+  background-color: #333333;
+}
