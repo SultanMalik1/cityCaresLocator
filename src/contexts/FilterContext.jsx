@@ -13,18 +13,18 @@ import { filterOrganizations } from "../utils/filterOrganizations"
 const FilterContext = createContext(undefined)
 
 function FilterProvider({ children }) {
-  const { enterprises } = useEnterprises()
+  const { organizations } = useEnterprises()
   const { selectedOrganizationId, clearSelection } = useSelection()
   const [search, setSearch] = useState("")
   const [selectedNeeds, setSelectedNeeds] = useState([])
 
   const filteredOrganizations = useMemo(
     () =>
-      filterOrganizations(enterprises, {
+      filterOrganizations(organizations, {
         search,
         needs: selectedNeeds,
       }),
-    [enterprises, search, selectedNeeds]
+    [organizations, search, selectedNeeds]
   )
 
   const toggleNeed = useCallback((needId) => {

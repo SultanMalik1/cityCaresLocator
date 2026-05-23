@@ -4,44 +4,64 @@ import {
   useEffect,
   useContext,
   useMemo,
+  useCallback,
 } from "react"
-import { getData } from "../hooks/apiResources"
+import {
+  getOrganizations,
+  getOrganizationById,
+  findOrganizationById,
+} from "../hooks/apiResources"
 import { isSupabaseConfigured } from "../hooks/supabase"
 
 const EnterprisesContext = createContext()
 
-function CitiesProvider({ children }) {
-  const [enterprises, setEnterprises] = useState([])
+function OrganizationsProvider({ children }) {
+  const [organizations, setOrganizations] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    async function fetchEnterprises() {
-      try {
-        setIsLoading(true)
-        setError(null)
-        const data = await getData()
-        setEnterprises(data)
-      } catch (err) {
-        console.error("Error fetching data:", err.message)
-        setError(err.message || "Could not load organizations")
-        setEnterprises([])
-      } finally {
-        setIsLoading(false)
-      }
+  const refetchOrganizations = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const data = await getOrganizations()
+      setOrganizations(data)
+    } catch (err) {
+      console.error("Error fetching organizations:", err.message)
+      setError(err.message || "Could not load organizations")
+      setOrganizations([])
+    } finally {
+      setIsLoading(false)
     }
-
-    fetchEnterprises()
   }, [])
+
+  useEffect(() => {
+    refetchOrganizations()
+  }, [refetchOrganizations])
+
+  const getOrganization = useCallback(
+    async (id) => {
+      const cached = findOrganizationById(organizations, id)
+      if (cached) return cached
+      return getOrganizationById(id)
+    },
+    [organizations]
+  )
 
   const value = useMemo(
     () => ({
-      enterprises,
+      organizations,
+      /** @deprecated Use organizations */
+      enterprises: organizations,
       isLoading,
       error,
       isSupabaseConfigured,
+      getOrganization,
+      /** @deprecated Use getOrganization */
+      getEnterprise: getOrganization,
+      refetchOrganizations,
     }),
-    [enterprises, isLoading, error]
+    [organizations, isLoading, error, getOrganization, refetchOrganizations]
   )
 
   return (
@@ -54,9 +74,18 @@ function CitiesProvider({ children }) {
 function useEnterprises() {
   const context = useContext(EnterprisesContext)
   if (context === undefined) {
-    throw new Error("useEnterprises must be used within CitiesProvider")
+    throw new Error(
+      "useEnterprises must be used within OrganizationsProvider (CitiesProvider)"
+    )
   }
   return context
 }
 
-export { CitiesProvider, useEnterprises }
+const useOrganizations = useEnterprises
+
+export {
+  OrganizationsProvider,
+  OrganizationsProvider as CitiesProvider,
+  useEnterprises,
+  useOrganizations,
+}

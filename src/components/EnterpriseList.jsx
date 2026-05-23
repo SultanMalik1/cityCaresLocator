@@ -9,7 +9,8 @@ import { useFilter } from "../contexts/FilterContext"
 import { NEEDS } from "../constants/needs"
 
 function EnterpriseList() {
-  const { isLoading, error, isSupabaseConfigured, enterprises } = useEnterprises()
+  const { isLoading, error, isSupabaseConfigured, organizations } =
+    useEnterprises()
   const {
     search,
     setSearch,
@@ -22,7 +23,7 @@ function EnterpriseList() {
   const { selectedOrganizationId } = useSelection()
   const itemRefs = useRef({})
 
-  const list = Array.isArray(enterprises) ? enterprises : []
+  const list = Array.isArray(organizations) ? organizations : []
   const filteredCities = Array.isArray(filteredOrganizations)
     ? filteredOrganizations
     : []

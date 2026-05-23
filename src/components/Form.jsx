@@ -8,7 +8,7 @@ import Message from "./Message";
 import Spinner from "./Spinner";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useEnterprises } from "../contexts/CitiesContext";
+import { useEnterprises } from "../contexts/EnterprisesContext";
 import { useNavigate } from "react-router-dom";
 
 export function convertToEmoji(countryCode) {
@@ -22,7 +22,7 @@ const BASE_URL = "https://api.bigdatacloud.net/data/reverse-geocode-client";
 
 function Form() {
   const [lat, lng] = useUrlPosition();
-  const { createCity, isLoading } = useEnterprises();
+  const { isLoading } = useEnterprises();
   const navigate = useNavigate();
 
   const [isLoadingGeoCoding, setIsLoadingGeoCoding] = useState();
@@ -73,8 +73,9 @@ function Form() {
       notes,
       position: { lat, lng },
     };
-    await createCity(newCity);
-    navigate("/app/cities");
+    // Organization submission is implemented in Phase 7 (Supabase insert).
+    console.warn("Form submit not wired yet:", newCity);
+    navigate("/app");
   }
 
   if (isLoadingGeoCoding) return <Spinner />;

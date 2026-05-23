@@ -14,7 +14,6 @@ function App() {
           <Route index element={<Homepage />} />
           <Route path="app" element={<AppLayout />}>
             <Route index element={<EnterpriseList />} />
-            <Route path="enterprises" element={<EnterpriseList />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
