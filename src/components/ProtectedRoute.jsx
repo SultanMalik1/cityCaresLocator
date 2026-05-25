@@ -17,7 +17,19 @@ function ProtectedRoute({ children, requireAdmin = false }) {
   if (isLoading) return <Spinner />
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          from: location.pathname,
+          reason:
+            location.pathname === "/app/submit"
+              ? "add-organization"
+              : undefined,
+        }}
+      />
+    )
   }
 
   if (requireAdmin && !isAdmin) {

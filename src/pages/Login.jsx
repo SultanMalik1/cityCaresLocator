@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import styles from "./Login.module.css"
 import { useAuth } from "../contexts/AuthContext"
 import { isSupabaseConfigured } from "../hooks/supabase"
@@ -19,6 +19,7 @@ function authErrorMessage(err, fallback) {
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { isAuthenticated, isAdmin, isLoading, loginWithGoogle, loginWithEmail } =
     useAuth()
   const [email, setEmail] = useState("")
@@ -26,11 +27,17 @@ export default function Login() {
   const [emailSent, setEmailSent] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const returnTo = location.state?.from
+  const wantsToAdd =
+    returnTo === "/app/submit" || location.state?.reason === "add-organization"
+
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate(isAdmin ? "/app/admin" : "/app", { replace: true })
+      const destination =
+        returnTo && returnTo !== "/login" ? returnTo : isAdmin ? "/app/admin" : "/app"
+      navigate(destination, { replace: true })
     }
-  }, [isAuthenticated, isAdmin, isLoading, navigate])
+  }, [isAuthenticated, isAdmin, isLoading, navigate, returnTo])
 
   if (!isSupabaseConfigured) {
     return (
@@ -89,7 +96,9 @@ export default function Login() {
       <div className={styles.card}>
         <h1 className={styles.title}>Sign in</h1>
         <p className={styles.lead}>
-          Contributors use Google. Admins use a magic link sent to their email.
+          {wantsToAdd
+            ? "You need to sign in before you can add an organization."
+            : "Sign in to add organizations to the map. Submissions are reviewed before they go live."}
         </p>
 
         {error && <p className={styles.error}>{error}</p>}
@@ -99,43 +108,37 @@ export default function Login() {
           </p>
         )}
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Contributor</h2>
-          <button
-            type="button"
-            className={styles.googleBtn}
-            onClick={handleGoogleLogin}
-            disabled={isSubmitting}
-          >
-            Continue with Google
-          </button>
-        </section>
+        <button
+          type="button"
+          className={styles.googleBtn}
+          onClick={handleGoogleLogin}
+          disabled={isSubmitting}
+        >
+          Continue with Google
+        </button>
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Admin</h2>
-          <form onSubmit={handleEmailLogin} className={styles.emailForm}>
-            <label htmlFor="email" className={styles.label}>
-              Email address
-            </label>
+        <details className={styles.adminDetails}>
+          <summary className={styles.adminSummary}>Admin sign-in</summary>
+          <form onSubmit={handleEmailLogin} className={styles.adminForm}>
             <input
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder="Admin email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
+              className={styles.adminInput}
               disabled={isSubmitting}
             />
             <button
               type="submit"
-              className={styles.primaryBtn}
+              className={styles.adminBtn}
               disabled={isSubmitting}
             >
               Send magic link
             </button>
           </form>
-        </section>
+        </details>
       </div>
     </main>
   )
