@@ -60,6 +60,76 @@ export function findOrganizationById(organizations, id) {
   return list.find((org) => String(org.id) === String(id)) ?? null
 }
 
+/** Contributor / admin: insert a pending organization (Phase 7). */
+export async function createOrganization(organization) {
+  const client = assertSupabase()
+  if (!client) throw new Error("Supabase is not configured")
+
+  const {
+    data: { user },
+    error: userError,
+  } = await client.auth.getUser()
+
+  if (userError) throw toError(userError, "Could not verify sign-in")
+  if (!user) throw new Error("You must be signed in to submit an organization")
+
+  const payload = {
+    name: organization.name,
+    cityname: organization.cityname ?? "New York",
+    oneliner: organization.oneliner ?? null,
+    fivebasics: organization.fivebasics ?? null,
+    notes: organization.notes ?? null,
+    address: organization.address ?? null,
+    website: organization.website ?? null,
+    position: organization.position ?? null,
+    status: ORGANIZATION_STATUS.PENDING,
+    created_by: user.id,
+  }
+
+  const { data, error } = await client
+    .from(ORGANIZATIONS_TABLE)
+    .insert(payload)
+    .select()
+    .single()
+
+  if (error) throw toError(error, "Could not submit organization")
+
+  return data
+}
+
+/** Admin: list organizations awaiting approval. */
+export async function getPendingOrganizations() {
+  const client = assertSupabase()
+  if (!client) return []
+
+  const { data, error } = await client
+    .from(ORGANIZATIONS_TABLE)
+    .select("*")
+    .eq("status", ORGANIZATION_STATUS.PENDING)
+    .order("created_at", { ascending: false })
+
+  if (error) throw toError(error, "Could not load pending organizations")
+
+  return Array.isArray(data) ? data : []
+}
+
+/** Admin: approve or reject an organization. */
+export async function updateOrganizationStatus(id, status) {
+  const client = assertSupabase()
+  if (!client) throw new Error("Supabase is not configured")
+
+  const { data, error } = await client
+    .from(ORGANIZATIONS_TABLE)
+    .update({ status })
+    .eq("id", id)
+    .select()
+    .single()
+
+  if (error) throw toError(error, "Could not update organization status")
+
+  return data
+}
+
 /** @deprecated Use getOrganizations */
 export async function getData() {
   return getOrganizations()

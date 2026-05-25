@@ -1,34 +1,52 @@
-import styles from "./User.module.css";
-
-const FAKE_USER = {
-  name: "Jack",
-  email: "jack@example.com",
-  password: "qwerty",
-  avatar: "https://i.pravatar.cc/100?u=zz",
-};
+import { Link } from "react-router-dom"
+import styles from "./User.module.css"
+import { useAuth } from "../contexts/AuthContext"
 
 function User() {
-  const user = FAKE_USER;
+  const { user, isAdmin, logout } = useAuth()
 
-  function handleClick() {}
+  if (!user) return null
+
+  const displayName =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email?.split("@")[0] ||
+    "User"
+
+  const avatar =
+    user.user_metadata?.avatar_url ||
+    user.user_metadata?.picture ||
+    null
+
+  async function handleLogout() {
+    try {
+      await logout()
+    } catch (err) {
+      console.error(err.message)
+    }
+  }
 
   return (
     <div className={styles.user}>
-      <img src={user.avatar} alt={user.name} />
-      <span>Welcome, {user.name}</span>
-      <button onClick={handleClick}>Logout</button>
+      {avatar ? (
+        <img src={avatar} alt="" className={styles.avatar} />
+      ) : (
+        <span className={styles.avatarPlaceholder} aria-hidden>
+          {displayName.charAt(0).toUpperCase()}
+        </span>
+      )}
+      <div className={styles.info}>
+        <span className={styles.name}>{displayName}</span>
+        {isAdmin && <span className={styles.badge}>Admin</span>}
+      </div>
+      <Link to="/app/submit" className={styles.addLink}>
+        Add
+      </Link>
+      <button type="button" onClick={handleLogout} className={styles.logout}>
+        Sign out
+      </button>
     </div>
-  );
+  )
 }
 
-export default User;
-
-/*
-CHALLENGE
-
-1) Add `AuthProvider` to `App.jsx`
-2) In the `Login.jsx` page, call `login()` from context
-3) Inside an effect, check whether `isAuthenticated === true`. If so, programatically navigate to `/app`
-4) In `User.js`, read and display logged in user from context (`user` object). Then include this component in `AppLayout.js`
-5) Handle logout button by calling `logout()` and navigating back to `/`
-*/
+export default User

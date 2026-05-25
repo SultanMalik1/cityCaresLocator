@@ -3,11 +3,18 @@
   padding: 1rem 2rem 0;
 }
 
-.nav ul {
+.list {
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.6rem;
   margin: 0;
   padding: 0;
+}
+
+.spacer {
+  flex: 1;
 }
 
 .nav a:link,
@@ -30,6 +37,15 @@
   color: var(--color-text);
   border-bottom-color: var(--color-accent);
   font-weight: 600;
+}
+
+.signIn {
+  color: var(--color-accent) !important;
+  font-weight: 600;
+}
+
+.signIn:hover {
+  color: var(--color-accent-hover) !important;
 }
 
 @media (max-width: 768px) {

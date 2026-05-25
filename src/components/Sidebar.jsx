@@ -1,6 +1,7 @@
 import { Outlet, Link } from "react-router-dom"
 import styles from "./Sidebar.module.css"
 import AppNav from "./AppNav"
+import User from "./User"
 
 function Sidebar() {
   return (
@@ -15,6 +16,10 @@ function Sidebar() {
       </header>
 
       <AppNav />
+
+      <div className={styles.userBar}>
+        <User />
+      </div>
 
       <div className={styles.content}>
         <Outlet />
