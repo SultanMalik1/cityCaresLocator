@@ -12,6 +12,13 @@ function assertSupabase() {
 
 function toError(error, fallback) {
   console.error("Supabase error:", error)
+
+  if (error?.code === "42501" || error?.message?.includes("row-level security")) {
+    return new Error(
+      "You do not have permission to submit. Make sure you are signed in and try again."
+    )
+  }
+
   return new Error(error?.message || fallback)
 }
 

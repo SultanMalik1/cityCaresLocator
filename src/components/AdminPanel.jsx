@@ -8,11 +8,7 @@ import {
 } from "../hooks/apiResources"
 import { ORGANIZATION_STATUS } from "../constants/organizationStatus"
 import { useEnterprises } from "../contexts/EnterprisesContext"
-import { NEEDS } from "../constants/needs"
-
-function needLabel(id) {
-  return NEEDS.find((n) => n.id === id)?.label ?? id
-}
+import { formatNeeds } from "../constants/needs"
 
 function AdminPanel() {
   const { refetchOrganizations } = useEnterprises()
@@ -78,7 +74,7 @@ function AdminPanel() {
                   {org.fivebasics && (
                     <>
                       <dt>Need</dt>
-                      <dd>{needLabel(org.fivebasics)}</dd>
+                      <dd>{formatNeeds(org.fivebasics)}</dd>
                     </>
                   )}
                   {org.address && (

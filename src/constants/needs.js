@@ -1,4 +1,7 @@
 /** Canonical need categories for chips and filtering (Phase 4). */
+export const MAX_PRIMARY_NEEDS = 5
+export const MAX_ONELINER_WORDS = 6
+
 export const NEEDS = [
   {
     id: "food",
@@ -57,4 +60,19 @@ const needById = new Map(NEEDS.map((need) => [need.id, need]))
 
 export function getNeedById(id) {
   return needById.get(id)
+}
+
+export function parseNeedIds(value) {
+  if (!value) return []
+  return value
+    .toString()
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
+}
+
+export function formatNeeds(value) {
+  return parseNeedIds(value)
+    .map((id) => getNeedById(id)?.label ?? id)
+    .join(", ")
 }

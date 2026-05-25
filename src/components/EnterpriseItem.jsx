@@ -1,6 +1,7 @@
 import { forwardRef } from "react"
 import styles from "./EnterpriseItem.module.css"
 import { useSelection } from "../contexts/SelectionContext"
+import { formatNeeds } from "../constants/needs"
 
 const EnterpriseItem = forwardRef(function EnterpriseItem({ city }, ref) {
   const { selectedOrganizationId, selectOrganization } = useSelection()
@@ -52,7 +53,7 @@ const EnterpriseItem = forwardRef(function EnterpriseItem({ city }, ref) {
             {fivebasics && (
               <p className={styles.meta}>
                 <span className={styles.metaLabel}>Focus</span>
-                {fivebasics}
+                {formatNeeds(fivebasics)}
               </p>
             )}
 

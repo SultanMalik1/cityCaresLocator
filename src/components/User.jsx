@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import styles from "./User.module.css"
 import { useAuth } from "../contexts/AuthContext"
 
 function User() {
+  const navigate = useNavigate()
   const { user, isAdmin, logout } = useAuth()
 
   if (!user) return null
@@ -21,6 +22,7 @@ function User() {
   async function handleLogout() {
     try {
       await logout()
+      navigate("/login", { replace: true })
     } catch (err) {
       console.error(err.message)
     }

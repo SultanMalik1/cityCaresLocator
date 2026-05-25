@@ -1,4 +1,4 @@
-import { getNeedById } from "../constants/needs"
+import { getNeedById, parseNeedIds } from "../constants/needs"
 
 function normalize(text) {
   return (text ?? "").toString().toLowerCase().trim()
@@ -21,8 +21,8 @@ export function organizationMatchesNeed(org, needId) {
   const need = getNeedById(needId)
   if (!need) return false
 
-  const basics = normalize(org.fivebasics)
-  if (basics === need.id || basics.includes(need.id)) return true
+  const basicsList = parseNeedIds(org.fivebasics)
+  if (basicsList.includes(need.id)) return true
 
   const text = organizationHaystack(org)
   return need.keywords.some((keyword) => text.includes(normalize(keyword)))

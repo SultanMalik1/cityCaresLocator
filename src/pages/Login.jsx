@@ -6,6 +6,17 @@ import { isSupabaseConfigured } from "../hooks/supabase"
 import Message from "../components/Message"
 import Spinner from "../components/Spinner"
 
+function authErrorMessage(err, fallback) {
+  const msg = err?.message || ""
+  if (
+    msg.includes("provider is not enabled") ||
+    msg.includes("Unsupported provider")
+  ) {
+    return "Google sign-in is not enabled for this Supabase project. In the Supabase Dashboard, open Authentication → Providers, enable Google, and add your OAuth client ID and secret."
+  }
+  return msg || fallback
+}
+
 export default function Login() {
   const navigate = useNavigate()
   const { isAuthenticated, isAdmin, isLoading, loginWithGoogle, loginWithEmail } =
@@ -43,7 +54,7 @@ export default function Login() {
       setIsSubmitting(true)
       await loginWithGoogle()
     } catch (err) {
-      setError(err.message || "Google sign-in failed")
+      setError(authErrorMessage(err, "Google sign-in failed"))
       setIsSubmitting(false)
     }
   }
@@ -58,7 +69,7 @@ export default function Login() {
       await loginWithEmail(email)
       setEmailSent(true)
     } catch (err) {
-      setError(err.message || "Could not send magic link")
+      setError(authErrorMessage(err, "Could not send magic link"))
     } finally {
       setIsSubmitting(false)
     }

@@ -10,6 +10,31 @@ import supabase, { isSupabaseConfigured } from "../hooks/supabase"
 
 const AuthContext = createContext(undefined)
 
+function stripAuthParamsFromUrl() {
+  if (typeof window === "undefined") return
+
+  const url = new URL(window.location.href)
+  const authQueryKeys = ["code", "access_token", "refresh_token", "error", "error_description"]
+  let changed = false
+
+  for (const key of authQueryKeys) {
+    if (url.searchParams.has(key)) {
+      url.searchParams.delete(key)
+      changed = true
+    }
+  }
+
+  if (url.hash) {
+    url.hash = ""
+    changed = true
+  }
+
+  if (changed) {
+    const next = `${url.pathname}${url.search}${url.hash}`
+    window.history.replaceState({}, document.title, next)
+  }
+}
+
 async function fetchProfile(userId) {
   if (!supabase || !userId) return null
 
@@ -49,6 +74,7 @@ function AuthProvider({ children }) {
     }
 
     let active = true
+    let subscription = null
 
     async function initSession() {
       const { data, error } = await supabase.auth.getSession()
@@ -58,26 +84,49 @@ function AuthProvider({ children }) {
 
       const sessionUser = data.session?.user ?? null
       setUser(sessionUser)
-      await loadProfile(sessionUser)
       setIsLoading(false)
+      stripAuthParamsFromUrl()
+
+      const {
+        data: { subscription: authSubscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!active) return
+
+        const nextUser = session?.user ?? null
+        setUser(nextUser)
+        if (!nextUser) setProfile(null)
+        setIsLoading(false)
+
+        if (nextUser) stripAuthParamsFromUrl()
+      })
+
+      subscription = authSubscription
     }
 
     initSession()
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const sessionUser = session?.user ?? null
-      setUser(sessionUser)
-      await loadProfile(sessionUser)
-      setIsLoading(false)
+    return () => {
+      active = false
+      subscription?.unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!user?.id) {
+      setProfile(null)
+      return
+    }
+
+    let active = true
+
+    fetchProfile(user.id).then((data) => {
+      if (active) setProfile(data)
     })
 
     return () => {
       active = false
-      subscription.unsubscribe()
     }
-  }, [loadProfile])
+  }, [user?.id])
 
   const loginWithGoogle = useCallback(async () => {
     if (!supabase) throw new Error("Supabase is not configured")
@@ -105,8 +154,14 @@ function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     if (!supabase) return
-    const { error } = await supabase.auth.signOut()
+
+    setUser(null)
+    setProfile(null)
+
+    const { error } = await supabase.auth.signOut({ scope: "local" })
     if (error) throw error
+
+    stripAuthParamsFromUrl()
   }, [])
 
   const value = useMemo(
