@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./OrganizationSubmitForm.module.css"
 import Button from "./Button"
@@ -10,28 +10,10 @@ import {
   NEEDS,
 } from "../constants/needs"
 import { createOrganization } from "../hooks/apiResources"
-import { useUrlPosition } from "../hooks/useUrlPosition"
-
-const LAT_LONG_HELP_URL =
-  "https://www.latlong.net/convert-address-to-lat-long.html"
+import { geocodeAddress } from "../utils/geocodeAddress"
 
 function countWords(text) {
   return text.trim().split(/\s+/).filter(Boolean).length
-}
-
-function parseCoordinate(value) {
-  const trimmed = String(value).trim()
-  if (!trimmed) return null
-  const num = Number(trimmed)
-  return Number.isFinite(num) ? num : null
-}
-
-function isValidLatitude(lat) {
-  return lat >= -90 && lat <= 90
-}
-
-function isValidLongitude(lng) {
-  return lng >= -180 && lng <= 180
 }
 
 function isValidWebsite(value) {
@@ -50,7 +32,6 @@ function isValidWebsite(value) {
 
 function OrganizationSubmitForm() {
   const navigate = useNavigate()
-  const [lat, lng] = useUrlPosition()
 
   const [name, setName] = useState("")
   const [oneliner, setOneliner] = useState("")
@@ -58,20 +39,64 @@ function OrganizationSubmitForm() {
   const [notes, setNotes] = useState("")
   const [address, setAddress] = useState("")
   const [website, setWebsite] = useState("")
-  const [manualLat, setManualLat] = useState(lat ?? "")
-  const [manualLng, setManualLng] = useState(lng ?? "")
 
-  useEffect(() => {
-    if (lat) setManualLat(lat)
-    if (lng) setManualLng(lng)
-  }, [lat, lng])
+  const [locationPreview, setLocationPreview] = useState(null)
+  const [isGeocoding, setIsGeocoding] = useState(false)
+  const [geocodeError, setGeocodeError] = useState("")
 
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const geocodeRequestId = useRef(0)
+  const lastGeocodedAddress = useRef("")
+
   const onelinerWordCount = countWords(oneliner)
   const notesWordCount = countWords(notes)
+
+  useEffect(() => {
+    const trimmed = address.trim()
+    if (!trimmed || trimmed.length < 8) {
+      setLocationPreview(null)
+      setGeocodeError("")
+      lastGeocodedAddress.current = ""
+      return
+    }
+
+    const requestId = ++geocodeRequestId.current
+    const timer = setTimeout(async () => {
+      setIsGeocoding(true)
+      setGeocodeError("")
+
+      try {
+        const result = await geocodeAddress(trimmed)
+        if (requestId !== geocodeRequestId.current) return
+
+        lastGeocodedAddress.current = trimmed
+        setLocationPreview(result)
+        setGeocodeError("")
+      } catch (err) {
+        if (requestId !== geocodeRequestId.current) return
+
+        lastGeocodedAddress.current = ""
+        setLocationPreview(null)
+        setGeocodeError(err.message || "Could not find that address.")
+      } finally {
+        if (requestId === geocodeRequestId.current) {
+          setIsGeocoding(false)
+        }
+      }
+    }, 700)
+
+    return () => clearTimeout(timer)
+  }, [address])
+
+  function handleAddressChange(e) {
+    setAddress(e.target.value)
+    if (e.target.value.trim() !== lastGeocodedAddress.current) {
+      setLocationPreview(null)
+    }
+  }
 
   function toggleNeed(needId) {
     setSelectedNeeds((current) => {
@@ -111,25 +136,6 @@ function OrganizationSubmitForm() {
       return "Address is required."
     }
 
-    const latNum = parseCoordinate(manualLat)
-    const lngNum = parseCoordinate(manualLng)
-
-    if (latNum === null) {
-      return "Latitude is required and must be a valid number."
-    }
-
-    if (!isValidLatitude(latNum)) {
-      return "Latitude must be between -90 and 90."
-    }
-
-    if (lngNum === null) {
-      return "Longitude is required and must be a valid number."
-    }
-
-    if (!isValidLongitude(lngNum)) {
-      return "Longitude must be between -180 and 180."
-    }
-
     if (!website.trim()) {
       return "Website is required."
     }
@@ -149,6 +155,21 @@ function OrganizationSubmitForm() {
     return null
   }
 
+  async function resolveCoordinates() {
+    const trimmed = address.trim()
+
+    if (
+      locationPreview &&
+      lastGeocodedAddress.current === trimmed &&
+      Number.isFinite(locationPreview.lat) &&
+      Number.isFinite(locationPreview.lng)
+    ) {
+      return locationPreview
+    }
+
+    return geocodeAddress(trimmed)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
 
@@ -158,12 +179,11 @@ function OrganizationSubmitForm() {
       return
     }
 
-    const latNum = parseCoordinate(manualLat)
-    const lngNum = parseCoordinate(manualLng)
-
     try {
       setError("")
       setIsSubmitting(true)
+
+      const { lat, lng } = await resolveCoordinates()
 
       await createOrganization({
         name: name.trim(),
@@ -173,7 +193,7 @@ function OrganizationSubmitForm() {
         notes: notes.trim(),
         address: address.trim(),
         website: website.trim(),
-        position: { lat: String(latNum), lng: String(lngNum) },
+        position: { lat: String(lat), lng: String(lng) },
       })
 
       setSuccess(true)
@@ -196,17 +216,8 @@ function OrganizationSubmitForm() {
       <h2 className={styles.title}>Add an organization</h2>
       <p className={styles.hint}>
         All fields are required. Submissions stay hidden until an admin approves
-        them. Map coordinates can be filled from the URL (?lat=&amp;lng=) or
-        entered below —{" "}
-        <a
-          href={LAT_LONG_HELP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.hintLink}
-        >
-          look up latitude and longitude from an address
-        </a>
-        .
+        them. Map coordinates are looked up automatically from the address you
+        enter.
       </p>
 
       {error && <p className={styles.error}>{error}</p>}
@@ -283,47 +294,31 @@ function OrganizationSubmitForm() {
           <input
             id="address"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={handleAddressChange}
+            placeholder="350 5th Ave, New York, NY 10118"
             required
+            autoComplete="street-address"
           />
+          {isGeocoding && (
+            <p className={styles.locationPreview} role="status">
+              Looking up map location…
+            </p>
+          )}
+          {!isGeocoding && geocodeError && (
+            <p className={`${styles.locationPreview} ${styles.locationPreviewError}`}>
+              {geocodeError}
+            </p>
+          )}
+          {!isGeocoding && locationPreview && !geocodeError && (
+            <p
+              className={`${styles.locationPreview} ${styles.locationPreviewSuccess}`}
+              role="status"
+            >
+              Map location found: {locationPreview.displayName} (
+              {locationPreview.lat.toFixed(5)}, {locationPreview.lng.toFixed(5)})
+            </p>
+          )}
         </div>
-
-        <div className={styles.rowPair}>
-          <div className={styles.row}>
-            <label htmlFor="lat">Latitude *</label>
-            <input
-              id="lat"
-              value={manualLat}
-              onChange={(e) => setManualLat(e.target.value)}
-              placeholder="40.77"
-              inputMode="decimal"
-              required
-            />
-          </div>
-          <div className={styles.row}>
-            <label htmlFor="lng">Longitude *</label>
-            <input
-              id="lng"
-              value={manualLng}
-              onChange={(e) => setManualLng(e.target.value)}
-              placeholder="-73.96"
-              inputMode="decimal"
-              required
-            />
-          </div>
-        </div>
-        <p className={styles.coordHelp}>
-          Need coordinates?{" "}
-          <a
-            href={LAT_LONG_HELP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.hintLink}
-          >
-            Convert an address to latitude and longitude
-          </a>
-          .
-        </p>
 
         <div className={styles.row}>
           <label htmlFor="website">Website *</label>
@@ -354,7 +349,7 @@ function OrganizationSubmitForm() {
 
         <div className={styles.actions}>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
-            Submit for review
+            {isSubmitting ? "Submitting…" : "Submit for review"}
           </Button>
           <button
             type="button"

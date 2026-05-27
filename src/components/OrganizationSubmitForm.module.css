@@ -24,10 +24,18 @@
   text-decoration: none;
 }
 
-.coordHelp {
+.locationPreview {
   font-size: 1.2rem;
   color: var(--color-text-muted);
   line-height: 1.5;
+}
+
+.locationPreviewSuccess {
+  color: var(--color-text);
+}
+
+.locationPreviewError {
+  color: #b91c1c;
 }
 
 .error {
