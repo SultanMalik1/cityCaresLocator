@@ -30,3 +30,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Cursor (plans, local agent artifacts — do not commit)
+.cursor/

@@ -13,16 +13,18 @@ function assertSupabase() {
 function toError(error, fallback) {
   console.error("Supabase error:", error)
 
-  if (error?.code === "42501" || error?.message?.includes("row-level security")) {
+  if (
+    error?.code === "42501" ||
+    error?.message?.includes("row-level security")
+  ) {
     return new Error(
-      "You do not have permission to submit. Make sure you are signed in and try again."
+      "You do not have permission to submit. Make sure you are signed in and try again.",
     )
   }
 
   return new Error(error?.message || fallback)
 }
 
-/** Public map: approved organizations only (Phase 6). */
 export async function getOrganizations() {
   const client = assertSupabase()
   if (!client) return []
@@ -67,7 +69,7 @@ export function findOrganizationById(organizations, id) {
   return list.find((org) => String(org.id) === String(id)) ?? null
 }
 
-/** Contributor / admin: insert a pending organization (Phase 7). */
+/** Contributor / admin: insert a pending organization. */
 export async function createOrganization(organization) {
   const client = assertSupabase()
   if (!client) throw new Error("Supabase is not configured")

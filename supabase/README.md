@@ -18,10 +18,11 @@ When creating `profiles` in step 002, choose **RLS off** (003 turns it on with p
    - Enable **Email** (magic link / OTP)
 
 2. **Authentication → URL Configuration**
-   - **Site URL:** `http://localhost:5173` (dev) or `https://citycares.netlify.app` (prod)
+   - **Site URL:** `https://citycares.info` (prod) or `http://localhost:5173` (dev)
    - **Redirect URLs:**
+     - `https://citycares.info/app`
+     - `https://citycares.info/**`
      - `http://localhost:5173/app`
-     - `https://citycares.netlify.app/app`
 
 3. Run **`003_rls.sql`** and **`004_auth_profile_trigger.sql`** if you have not already.
 

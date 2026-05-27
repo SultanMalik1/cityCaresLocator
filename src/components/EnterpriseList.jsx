@@ -24,9 +24,6 @@ function EnterpriseList() {
   const itemRefs = useRef({})
 
   const list = Array.isArray(organizations) ? organizations : []
-  const filteredCities = Array.isArray(filteredOrganizations)
-    ? filteredOrganizations
-    : []
 
   const setItemRef = useCallback((id) => {
     return (el) => {
@@ -104,15 +101,15 @@ function EnterpriseList() {
         )}
       </div>
 
-      {filteredCities.length === 0 ? (
+      {filteredOrganizations.length === 0 ? (
         <Message message="No organizations match these filters." />
       ) : (
         <ul className={styles.CityList}>
-          {filteredCities.map((city) => (
+          {filteredOrganizations.map((organization) => (
             <EnterpriseItem
-              city={city}
-              key={city.id}
-              ref={setItemRef(city.id)}
+              city={organization}
+              key={organization.id}
+              ref={setItemRef(organization.id)}
             />
           ))}
         </ul>
