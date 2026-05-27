@@ -3,7 +3,7 @@ import styles from "./EnterpriseItem.module.css"
 import { useSelection } from "../contexts/SelectionContext"
 import { formatNeeds } from "../constants/needs"
 
-const EnterpriseItem = forwardRef(function EnterpriseItem({ city }, ref) {
+const EnterpriseItem = forwardRef(function EnterpriseItem({ organization }, ref) {
   const { selectedOrganizationId, selectOrganization } = useSelection()
   const {
     name,
@@ -15,7 +15,7 @@ const EnterpriseItem = forwardRef(function EnterpriseItem({ city }, ref) {
     website,
     propublica_url,
     guidestar_url,
-  } = city
+  } = organization
 
   const isSelected = String(id) === String(selectedOrganizationId)
 
@@ -30,8 +30,8 @@ const EnterpriseItem = forwardRef(function EnterpriseItem({ city }, ref) {
   return (
     <li ref={ref}>
       <div
-        className={`${styles.cityItem} ${
-          isSelected ? styles["cityItem--active"] : ""
+        className={`${styles.organizationItem} ${
+          isSelected ? styles["organizationItem--active"] : ""
         }`}
         onClick={handleSelect}
         onKeyDown={(e) => {

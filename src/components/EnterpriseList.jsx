@@ -107,7 +107,7 @@ function EnterpriseList() {
         <ul className={styles.CityList}>
           {filteredOrganizations.map((organization) => (
             <EnterpriseItem
-              city={organization}
+              organization={organization}
               key={organization.id}
               ref={setItemRef(organization.id)}
             />

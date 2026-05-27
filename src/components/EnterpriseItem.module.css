@@ -1,6 +1,6 @@
-.cityItem,
-.cityItem:link,
-.cityItem:visited {
+.organizationItem,
+.organizationItem:link,
+.organizationItem:visited {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -18,12 +18,12 @@
   min-height: 44px;
 }
 
-.cityItem:hover {
+.organizationItem:hover {
   border-color: var(--color-text-muted);
   box-shadow: var(--shadow-sm);
 }
 
-.cityItem--active {
+.organizationItem--active {
   border-color: var(--color-accent);
   border-left-color: var(--color-accent);
   box-shadow: var(--shadow-sm);

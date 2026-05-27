@@ -15,6 +15,21 @@
   line-height: 1.5;
 }
 
+.hintLink {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.hintLink:hover {
+  text-decoration: none;
+}
+
+.coordHelp {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
 .error {
   color: #b91c1c;
   font-size: 1.4rem;

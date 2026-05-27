@@ -8,7 +8,7 @@ import {
 
 const SelectionContext = createContext(undefined)
 
-// Shared map ↔ sidebar selection (Phase 3)
+// Shared map ↔ sidebar selection
 function SelectionProvider({ children }) {
   const [selectedOrganizationId, setSelectedOrganizationId] = useState(null)
 
@@ -26,7 +26,7 @@ function SelectionProvider({ children }) {
       selectOrganization,
       clearSelection,
     }),
-    [selectedOrganizationId, selectOrganization, clearSelection]
+    [selectedOrganizationId, selectOrganization, clearSelection],
   )
 
   return (

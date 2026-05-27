@@ -1,6 +1,7 @@
 /** Canonical need categories for chips and filtering (Phase 4). */
 export const MAX_PRIMARY_NEEDS = 5
 export const MAX_ONELINER_WORDS = 6
+export const MIN_NOTES_WORDS = 20
 
 export const NEEDS = [
   {
