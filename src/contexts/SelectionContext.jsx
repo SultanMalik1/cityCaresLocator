@@ -11,22 +11,42 @@ const SelectionContext = createContext(undefined)
 // Shared map ↔ sidebar selection
 function SelectionProvider({ children }) {
   const [selectedOrganizationId, setSelectedOrganizationId] = useState(null)
+  const [selectedShelterId, setSelectedShelterId] = useState(null)
 
   const selectOrganization = useCallback((id) => {
-    setSelectedOrganizationId((current) => (current === id ? null : id))
+    setSelectedShelterId(null)
+    setSelectedOrganizationId((current) =>
+      String(current) === String(id) ? null : id,
+    )
+  }, [])
+
+  const selectShelter = useCallback((id) => {
+    setSelectedOrganizationId(null)
+    setSelectedShelterId((current) =>
+      String(current) === String(id) ? null : id,
+    )
   }, [])
 
   const clearSelection = useCallback(() => {
     setSelectedOrganizationId(null)
+    setSelectedShelterId(null)
   }, [])
 
   const value = useMemo(
     () => ({
       selectedOrganizationId,
+      selectedShelterId,
       selectOrganization,
+      selectShelter,
       clearSelection,
     }),
-    [selectedOrganizationId, selectOrganization, clearSelection],
+    [
+      selectedOrganizationId,
+      selectedShelterId,
+      selectOrganization,
+      selectShelter,
+      clearSelection,
+    ],
   )
 
   return (

@@ -5,6 +5,7 @@ import PageNotFound from "./pages/PageNotFound"
 import Login from "./pages/Login"
 import AppLayout from "./pages/AppLayout"
 import EnterpriseList from "./components/EnterpriseList"
+import ShelterList from "./components/ShelterList"
 import OrganizationSubmitForm from "./components/OrganizationSubmitForm"
 import AdminPanel from "./components/AdminPanel"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -21,6 +22,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="app" element={<AppLayout />}>
               <Route index element={<EnterpriseList />} />
+              <Route path="shelters" element={<ShelterList />} />
               <Route
                 path="submit"
                 element={

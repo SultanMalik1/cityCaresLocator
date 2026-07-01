@@ -14,6 +14,10 @@ function AppNav() {
           </NavLink>
         </li>
 
+        <li>
+          <NavLink to="shelters">Shelters</NavLink>
+        </li>
+
         {isAuthenticated ? (
           <li>
             <NavLink to="submit">Add organization</NavLink>

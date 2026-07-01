@@ -10,6 +10,8 @@ import {
   getOrganizations,
   getOrganizationById,
   findOrganizationById,
+  getShelterSites,
+  findShelterById,
 } from "../hooks/apiResources"
 import { isSupabaseConfigured } from "../hooks/supabase"
 
@@ -17,6 +19,7 @@ const EnterprisesContext = createContext()
 
 function OrganizationsProvider({ children }) {
   const [organizations, setOrganizations] = useState([])
+  const [shelterSites, setShelterSites] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -35,9 +38,44 @@ function OrganizationsProvider({ children }) {
     }
   }, [])
 
+  const refetchShelterSites = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const data = await getShelterSites()
+      setShelterSites(data)
+    } catch (err) {
+      console.error("Error fetching shelter sites:", err.message)
+      setError(err.message || "Could not load shelter sites")
+      setShelterSites([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const refetchAll = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const [orgs, shelters] = await Promise.all([
+        getOrganizations(),
+        getShelterSites(),
+      ])
+      setOrganizations(orgs)
+      setShelterSites(shelters)
+    } catch (err) {
+      console.error("Error fetching resources:", err.message)
+      setError(err.message || "Could not load resources")
+      setOrganizations([])
+      setShelterSites([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
-    refetchOrganizations()
-  }, [refetchOrganizations])
+    refetchAll()
+  }, [refetchAll])
 
   const getOrganization = useCallback(
     async (id) => {
@@ -48,20 +86,39 @@ function OrganizationsProvider({ children }) {
     [organizations]
   )
 
+  const getShelter = useCallback(
+    (id) => findShelterById(shelterSites, id),
+    [shelterSites],
+  )
+
   const value = useMemo(
     () => ({
       organizations,
+      shelterSites,
       /** @deprecated Use organizations */
       enterprises: organizations,
       isLoading,
       error,
       isSupabaseConfigured,
       getOrganization,
+      getShelter,
       /** @deprecated Use getOrganization */
       getEnterprise: getOrganization,
       refetchOrganizations,
+      refetchShelterSites,
+      refetchAll,
     }),
-    [organizations, isLoading, error, getOrganization, refetchOrganizations]
+    [
+      organizations,
+      shelterSites,
+      isLoading,
+      error,
+      getOrganization,
+      getShelter,
+      refetchOrganizations,
+      refetchShelterSites,
+      refetchAll,
+    ],
   )
 
   return (

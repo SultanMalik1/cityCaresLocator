@@ -2,6 +2,10 @@ import supabase, { isSupabaseConfigured } from "./supabase"
 import { ORGANIZATION_STATUS } from "../constants/organizationStatus"
 
 const ORGANIZATIONS_TABLE = "organizations"
+const SHELTER_SITES_TABLE = "shelter_sites"
+
+const SHELTER_SITES_SELECT =
+  "id, name, shelter_type, populations_served, services_offered, address_line1, borough, zip_code, latitude, longitude, is_address_public, access_method, intake_notes, phone, email, website_url, is_24_7, hours_text, notes, source_url"
 
 function assertSupabase() {
   if (!isSupabaseConfigured || !supabase) {
@@ -137,6 +141,29 @@ export async function updateOrganizationStatus(id, status) {
   if (error) throw toError(error, "Could not update organization status")
 
   return data
+}
+
+export async function getShelterSites() {
+  const client = assertSupabase()
+  if (!client) return []
+
+  const { data, error } = await client
+    .from(SHELTER_SITES_TABLE)
+    .select(SHELTER_SITES_SELECT)
+    .eq("is_active", true)
+    .not("latitude", "is", null)
+    .not("longitude", "is", null)
+    .order("name", { ascending: true })
+
+  if (error) throw toError(error, "Shelter sites could not be loaded")
+
+  return Array.isArray(data) ? data : []
+}
+
+export function findShelterById(shelters, id) {
+  const list = Array.isArray(shelters) ? shelters : []
+  if (id === undefined || id === null || id === "") return null
+  return list.find((shelter) => String(shelter.id) === String(id)) ?? null
 }
 
 /** @deprecated Use getOrganizations */

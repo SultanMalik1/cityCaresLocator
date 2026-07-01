@@ -22,6 +22,8 @@ function buildSearchQuery(address) {
  * @param {string} address
  * @returns {Promise<{ lat: number, lng: number, displayName: string }>}
  */
+
+//https://photon.komoot.io/api/?q=350+5th+Ave%2C+New+York%2C+NY&limit=1&lang=en&lat=40.7128&lon=-74.006
 export async function geocodeAddress(address) {
   const query = buildSearchQuery(address)
   if (!query) {

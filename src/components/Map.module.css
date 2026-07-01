@@ -74,6 +74,23 @@
   border-width: 3px;
 }
 
+:global(.shelter-marker) {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: #2563eb;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+:global(.shelter-marker--selected) {
+  width: 16px;
+  height: 16px;
+  background-color: #1d4ed8;
+  border-width: 3px;
+}
+
 @media (max-width: 768px) {
   .mapContainer,
   .map,

@@ -1,26 +1,41 @@
 import styles from "./Map.module.css"
 import { useEnterprises } from "../contexts/EnterprisesContext"
 import { useFilter } from "../contexts/FilterContext"
+import { useShelterFilter } from "../contexts/ShelterFilterContext"
 import { useSelection } from "../contexts/SelectionContext"
 import L from "leaflet"
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useLocation } from "react-router-dom"
 
-const defaultMarkerIcon = L.divIcon({
+const defaultOrgMarkerIcon = L.divIcon({
   className: "",
   html: '<span class="org-marker"></span>',
   iconSize: [14, 14],
   iconAnchor: [7, 7],
 })
 
-const selectedMarkerIcon = L.divIcon({
+const selectedOrgMarkerIcon = L.divIcon({
   className: "",
   html: '<span class="org-marker org-marker--selected"></span>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
 })
 
-// Manhattan — all organizations are in this area
+const defaultShelterMarkerIcon = L.divIcon({
+  className: "",
+  html: '<span class="shelter-marker"></span>',
+  iconSize: [14, 14],
+  iconAnchor: [7, 7],
+})
+
+const selectedShelterMarkerIcon = L.divIcon({
+  className: "",
+  html: '<span class="shelter-marker shelter-marker--selected"></span>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+})
+
 const NYC_CENTER = [40.77206305312022, -73.9627399862185]
 
 function parseCoord(value) {
@@ -28,10 +43,17 @@ function parseCoord(value) {
   return Number.isFinite(n) ? n : null
 }
 
-function getCoords(enterprise) {
-  if (!enterprise?.position) return null
-  const lat = parseCoord(enterprise.position.lat)
-  const lng = parseCoord(enterprise.position.lng)
+function getOrgCoords(organization) {
+  if (!organization?.position) return null
+  const lat = parseCoord(organization.position.lat)
+  const lng = parseCoord(organization.position.lng)
+  if (lat === null || lng === null) return null
+  return { lat, lng }
+}
+
+function getShelterCoords(shelter) {
+  const lat = parseCoord(shelter?.latitude)
+  const lng = parseCoord(shelter?.longitude)
   if (lat === null || lng === null) return null
   return { lat, lng }
 }
@@ -51,45 +73,80 @@ function Map({ layoutKey = 0 }) {
 }
 
 function MapView({ layoutKey }) {
+  const location = useLocation()
+  const isSheltersView = location.pathname.includes("/shelters")
   const { filteredOrganizations } = useFilter()
+  const { filteredShelters } = useShelterFilter()
+  const {
+    selectedOrganizationId,
+    selectedShelterId,
+    selectOrganization,
+    selectShelter,
+  } = useSelection()
+
   const organizations = useMemo(
-    () =>
-      Array.isArray(filteredOrganizations) ? filteredOrganizations : [],
-    [filteredOrganizations]
+    () => (Array.isArray(filteredOrganizations) ? filteredOrganizations : []),
+    [filteredOrganizations],
   )
-  const { selectedOrganizationId, selectOrganization } = useSelection()
+
+  const shelters = useMemo(
+    () => (Array.isArray(filteredShelters) ? filteredShelters : []),
+    [filteredShelters],
+  )
 
   const [flyTarget, setFlyTarget] = useState(null)
 
   const selectedCoords = useMemo(() => {
+    if (isSheltersView) {
+      const shelter = shelters.find(
+        (item) => String(item.id) === String(selectedShelterId),
+      )
+      return getShelterCoords(shelter)
+    }
+
     const org = organizations.find(
-      (e) => String(e.id) === String(selectedOrganizationId)
+      (item) => String(item.id) === String(selectedOrganizationId),
     )
-    return getCoords(org)
-  }, [organizations, selectedOrganizationId])
+    return getOrgCoords(org)
+  }, [
+    isSheltersView,
+    shelters,
+    selectedShelterId,
+    organizations,
+    selectedOrganizationId,
+  ])
 
   const selectedLat = selectedCoords?.lat
   const selectedLng = selectedCoords?.lng
+  const selectedId = isSheltersView ? selectedShelterId : selectedOrganizationId
 
   useEffect(() => {
-    if (!selectedOrganizationId || selectedLat == null || selectedLng == null) {
+    if (!selectedId || selectedLat == null || selectedLng == null) {
       return
     }
 
+    const prefix = isSheltersView ? "shelter" : "org"
     const next = {
       lat: selectedLat,
       lng: selectedLng,
       zoom: 14,
-      key: `org-${selectedOrganizationId}`,
+      key: `${prefix}-${selectedId}`,
     }
     setFlyTarget((prev) => (prev?.key === next.key ? prev : next))
-  }, [selectedOrganizationId, selectedLat, selectedLng])
+  }, [isSheltersView, selectedId, selectedLat, selectedLng])
 
-  const handleMarkerClick = useCallback(
+  const handleOrgMarkerClick = useCallback(
     (id) => {
       selectOrganization(id)
     },
-    [selectOrganization]
+    [selectOrganization],
+  )
+
+  const handleShelterMarkerClick = useCallback(
+    (id) => {
+      selectShelter(id)
+    },
+    [selectShelter],
   )
 
   return (
@@ -105,24 +162,47 @@ function MapView({ layoutKey }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {organizations.map((enterprise) => {
-          const coords = getCoords(enterprise)
-          if (!coords) return null
+        {!isSheltersView &&
+          organizations.map((organization) => {
+            const coords = getOrgCoords(organization)
+            if (!coords) return null
 
-          const isSelected =
-            String(enterprise.id) === String(selectedOrganizationId)
+            const isSelected =
+              String(organization.id) === String(selectedOrganizationId)
 
-          return (
-            <Marker
-              key={enterprise.id}
-              position={[coords.lat, coords.lng]}
-              icon={isSelected ? selectedMarkerIcon : defaultMarkerIcon}
-              eventHandlers={{
-                click: () => handleMarkerClick(enterprise.id),
-              }}
-            />
-          )
-        })}
+            return (
+              <Marker
+                key={`org-${organization.id}`}
+                position={[coords.lat, coords.lng]}
+                icon={isSelected ? selectedOrgMarkerIcon : defaultOrgMarkerIcon}
+                eventHandlers={{
+                  click: () => handleOrgMarkerClick(organization.id),
+                }}
+              />
+            )
+          })}
+
+        {isSheltersView &&
+          shelters.map((shelter) => {
+            const coords = getShelterCoords(shelter)
+            if (!coords) return null
+
+            const isSelected =
+              String(shelter.id) === String(selectedShelterId)
+
+            return (
+              <Marker
+                key={`shelter-${shelter.id}`}
+                position={[coords.lat, coords.lng]}
+                icon={
+                  isSelected ? selectedShelterMarkerIcon : defaultShelterMarkerIcon
+                }
+                eventHandlers={{
+                  click: () => handleShelterMarkerClick(shelter.id),
+                }}
+              />
+            )
+          })}
 
         <MapEffects flyTarget={flyTarget} layoutKey={layoutKey} />
       </MapContainer>

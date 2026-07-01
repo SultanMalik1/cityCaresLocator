@@ -1,15 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useLocation } from "react-router-dom"
 import Sidebar from "../components/Sidebar"
 import Map from "../components/Map"
 import ErrorBoundary from "../components/ErrorBoundary"
-import { SelectionProvider } from "../contexts/SelectionContext"
+import { SelectionProvider, useSelection } from "../contexts/SelectionContext"
 import { FilterProvider } from "../contexts/FilterContext"
+import { ShelterFilterProvider } from "../contexts/ShelterFilterContext"
 import { useIsMobile } from "../hooks/useIsMobile"
 import styles from "./AppLayout.module.css"
 
 const MIN_SIDEBAR_VH = 22
 const MAX_SIDEBAR_VH = 72
 const DEFAULT_SIDEBAR_VH = 42
+
+function SelectionResetOnRouteChange() {
+  const location = useLocation()
+  const { clearSelection } = useSelection()
+
+  useEffect(() => {
+    clearSelection()
+  }, [location.pathname, clearSelection])
+
+  return null
+}
 
 function AppLayout() {
   const isMobile = useIsMobile()
@@ -75,37 +88,40 @@ function AppLayout() {
   return (
     <SelectionProvider>
       <FilterProvider>
-      <div
-        ref={appRef}
-        className={`${styles.app} ${isDragging ? styles.appDragging : ""}`}
-      >
-        <div className={styles.sidebarPanel} style={sidebarStyle}>
-          <ErrorBoundary>
-            <Sidebar />
-          </ErrorBoundary>
-        </div>
-
-        {isMobile && (
+        <ShelterFilterProvider>
+          <SelectionResetOnRouteChange />
           <div
-            className={styles.resizeHandle}
-            onPointerDown={handleResizeStart}
-            role="separator"
-            aria-orientation="horizontal"
-            aria-label="Drag to resize map and list"
-            aria-valuenow={Math.round(sidebarVh)}
-            aria-valuemin={MIN_SIDEBAR_VH}
-            aria-valuemax={MAX_SIDEBAR_VH}
+            ref={appRef}
+            className={`${styles.app} ${isDragging ? styles.appDragging : ""}`}
           >
-            <span className={styles.resizeBar} />
-          </div>
-        )}
+            <div className={styles.sidebarPanel} style={sidebarStyle}>
+              <ErrorBoundary>
+                <Sidebar />
+              </ErrorBoundary>
+            </div>
 
-        <div className={styles.mapPanel}>
-          <ErrorBoundary>
-            <Map layoutKey={mapLayoutKey} />
-          </ErrorBoundary>
-        </div>
-      </div>
+            {isMobile && (
+              <div
+                className={styles.resizeHandle}
+                onPointerDown={handleResizeStart}
+                role="separator"
+                aria-orientation="horizontal"
+                aria-label="Drag to resize map and list"
+                aria-valuenow={Math.round(sidebarVh)}
+                aria-valuemin={MIN_SIDEBAR_VH}
+                aria-valuemax={MAX_SIDEBAR_VH}
+              >
+                <span className={styles.resizeBar} />
+              </div>
+            )}
+
+            <div className={styles.mapPanel}>
+              <ErrorBoundary>
+                <Map layoutKey={mapLayoutKey} />
+              </ErrorBoundary>
+            </div>
+          </div>
+        </ShelterFilterProvider>
       </FilterProvider>
     </SelectionProvider>
   )
